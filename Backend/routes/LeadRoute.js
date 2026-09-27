@@ -33,6 +33,8 @@ router.patch("/webhooks/:id/regenerate-token", webhook.regenerateWebhookToken);
 
 router.post("/leads", protect,leadController.createLead);
 router.get("/leads",protect, leadController.getAllLeads);
+router.get("/leads/stats", protect, leadController.getLeadStats);
+router.post("/leads/bulk-assign", protect, leadController.bulkAssignLeads);
 router.get("/leads/changed-by", protect, leadController.getChangedByOptions);
 
 // Get single lead by ID

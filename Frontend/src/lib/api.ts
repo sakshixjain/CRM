@@ -345,8 +345,19 @@ deleteCompany(id: number | string) {
       );
     },
 
+    bulkAssign(payload: { lead_ids: Array<number | string>; assign_to?: number | null; agent_id?: number | null }) {
+      return request<{ success: boolean; updatedCount?: number; message?: string }>(
+        `/api/leads/bulk-assign`,
+        "POST",
+        payload
+      );
+    },
+
     stats() {
-      return request<{ success: boolean; data: any }>(`/api/leads/stats`, "GET");
+      return request<{
+        success: boolean;
+        data: { total: number; assigned: number; unassigned: number; myLeads: number };
+      }>(`/api/leads/stats`, "GET");
     },
   },
 
@@ -622,6 +633,7 @@ listAgentById(id: number | string) {
     name: string;
     contact_no: string;
     email: string;
+    city?: string;
   
     role_id: number;
     is_active:boolean;
@@ -732,6 +744,52 @@ listAgentById(id: number | string) {
         affectedCount?: number;
         message?: string;
       }>(`/api/activity/mark-stale-closed`, "POST", payload);
+    },
+  },
+
+  // Email & Campaign Broadcast API
+  email: {
+    getTemplates() {
+      return request<{ success: boolean; data: any[] }>("/api/email/templates", "GET");
+    },
+    createTemplate(payload: { name: string; subject: string; body_html: string; category?: string }) {
+      return request<{ success: boolean; data: any; message?: string }>("/api/email/templates", "POST", payload);
+    },
+    updateTemplate(id: number | string, payload: any) {
+      return request<{ success: boolean; data: any; message?: string }>(`/api/email/templates/${id}`, "PUT", payload);
+    },
+    deleteTemplate(id: number | string) {
+      return request<{ success: boolean; message?: string }>(`/api/email/templates/${id}`, "DELETE");
+    },
+    getSmtp() {
+      return request<{ success: boolean; data: any }>("/api/email/smtp", "GET");
+    },
+    saveSmtp(payload: any) {
+      return request<{ success: boolean; data?: any; message?: string }>("/api/email/smtp", "POST", payload);
+    },
+    testSmtp(test_email: string) {
+      return request<{ success: boolean; message?: string; isMock?: boolean }>("/api/email/test-smtp", "POST", { test_email });
+    },
+    sendBulkStatus(payload: { status_id: number | string; template_id?: number | string; subject?: string; body_html?: string }) {
+      return request<{
+        success: boolean;
+        message: string;
+        totalLeads: number;
+        sentCount: number;
+        failedCount: number;
+        isMock?: boolean;
+        results?: any[];
+      }>("/api/email/bulk-status", "POST", payload);
+    },
+    sendBulkSelected(payload: { lead_ids: (number | string)[]; template_id?: number | string; subject?: string; body_html?: string }) {
+      return request<{
+        success: boolean;
+        message: string;
+        totalLeads: number;
+        sentCount: number;
+        failedCount: number;
+        isMock?: boolean;
+      }>("/api/email/bulk-selected", "POST", payload);
     },
   },
 

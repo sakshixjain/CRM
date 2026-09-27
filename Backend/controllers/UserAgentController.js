@@ -46,7 +46,7 @@ exports.createAgent = async (req, res) => {
       });
     }
 
-    const { name, contact_no, email, role_id } = req.body;
+    const { name, contact_no, email, role_id, city } = req.body;
 
     if (!name || !contact_no || !email || !role_id) {
       await t.rollback();
@@ -90,6 +90,7 @@ exports.createAgent = async (req, res) => {
         name,
         contact_no,
         email: cleanEmail,
+        city: city ? String(city).trim() : null,
         role_id: Number(role_id),
         is_active: true,
       },
@@ -236,7 +237,7 @@ exports.updateAgent = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { name, contact_no, email, password, role_id, is_active } = req.body;
+    const { name, contact_no, email, password, role_id, is_active, city } = req.body;
 
     const agent = await Agent.findOne({
       where: {
@@ -299,6 +300,7 @@ exports.updateAgent = async (req, res) => {
     if (email !== undefined) agentUpdate.email = String(email).trim().toLowerCase();
     if (role_id !== undefined) agentUpdate.role_id = Number(role_id);
     if (is_active !== undefined) agentUpdate.is_active = Boolean(is_active);
+    if (city !== undefined) agentUpdate.city = city ? String(city).trim() : null;
 
     // ✅ Admin update (same fields + optional password)
     const adminUpdate = { ...agentUpdate };

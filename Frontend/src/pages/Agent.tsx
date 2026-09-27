@@ -24,6 +24,7 @@ type Agent = {
   name: string;
   contact_no: string;
   email: string;
+  city?: string;
   role_id: number;
   is_active?: boolean;
   created_at?: string;
@@ -33,6 +34,7 @@ const emptyForm = {
   name: "",
   contact_no: "",
   email: "",
+  city: "",
 
   is_active: true,
   role_id: 2,
@@ -291,6 +293,7 @@ export default function AgentPage() {
       name: agent.name || "",
       contact_no: agent.contact_no || "",
       email: agent.email || "",
+      city: agent.city || "",
       is_active: active,
       role_id: agent.role_id ?? 2,
     });
@@ -358,6 +361,7 @@ export default function AgentPage() {
         name: form.name,
         contact_no: form.contact_no,
         email: form.email,
+        city: form.city || undefined,
         role_id: Number(form.role_id),
         is_active: isActive,
       });
@@ -396,6 +400,7 @@ export default function AgentPage() {
         name: form.name,
         contact_no: form.contact_no,
         email: form.email,
+        city: form.city || null,
         role_id: Number(form.role_id),
         is_active: isActive,
       };
@@ -570,7 +575,14 @@ export default function AgentPage() {
                     <td className="px-5 py-3 text-slate-700">{a.id}</td>
 
                     <td className="px-5 py-3">
-                      <div className="font-semibold text-slate-900">{a.name}</div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-semibold text-slate-900">{a.name}</span>
+                        {a.city && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            {a.city}
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     <td className="px-5 py-3 text-slate-700">
@@ -828,6 +840,23 @@ function AgentForm({
           <option value={1}>Admin</option>
           <option value={2}>Agent</option>
         </select>
+      </div>
+
+      <div className="sm:col-span-2">
+        <label className="block text-xs font-semibold text-slate-600 mb-1">
+          Assigned City (for Intelligent Auto-Assignment)
+        </label>
+        <input
+          className="w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white
+          focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+          placeholder="e.g. Mumbai, Delhi, Bengaluru, Dubai, London"
+          value={form.city}
+          onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
+        />
+        <div className="mt-1 text-[11px] text-slate-500">
+          Inbound leads matching this city will automatically route to this agent.
+        </div>
+
       </div>
 
       <div className="sm:col-span-2 flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-3">

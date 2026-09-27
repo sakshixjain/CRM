@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useMemo, useState } from "react";
 import { Loader2, Pencil, Plus, RefreshCcw, Settings2, Trash2, X } from "lucide-react";
 import toast from "react-hot-toast";
@@ -12,9 +13,6 @@ type QuotationServiceRow = {
   updated_at?: string;
 };
 
-function cn(...cls: Array<string | boolean | undefined | null>) {
-  return cls.filter(Boolean).join(" ");
-}
 
 function normalizeDescriptionForEditor(value?: string) {
   if (!value) return "";
@@ -114,31 +112,31 @@ function Modal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-950/55 backdrop-blur-[2px]" onClick={onClose} />
-      <div className="relative flex max-h-[calc(100vh-32px)] w-full max-w-2xl flex-col overflow-hidden rounded-md border border-slate-200 bg-white shadow-xl">
-        <div className="shrink-0 flex items-start justify-between gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" onClick={onClose} />
+      <div className="relative flex max-h-[calc(100vh-32px)] w-full max-w-2xl flex-col overflow-hidden rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl">
+        <div className="shrink-0 flex items-start justify-between gap-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-6 py-4">
           <div>
-            <div className="text-lg font-bold text-slate-900">{title}</div>
-            {subtitle ? <div className="text-sm text-slate-600">{subtitle}</div> : null}
+            <div className="text-base font-extrabold text-slate-900 dark:text-white">{title}</div>
+            {subtitle ? <div className="text-xs font-medium text-slate-400 mt-0.5">{subtitle}</div> : null}
           </div>
 
           <button
             onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white transition hover:bg-slate-50"
+            className="flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-white transition"
             title="Close"
             type="button"
           >
-            <X size={18} className="text-slate-700" />
+            <X size={16} />
           </button>
         </div>
 
-        <div className="sidebar-scroll min-h-0 flex-1 overflow-y-auto p-5">{children}</div>
+        <div className="sidebar-scroll min-h-0 flex-1 overflow-y-auto p-6 space-y-4">{children}</div>
 
-        <div className="shrink-0 flex items-center justify-end gap-2 border-t border-slate-200 bg-white px-5 py-4">
+        <div className="shrink-0 flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900 px-6 py-4">
           <button
             onClick={onClose}
-            className="rounded-md border border-slate-200 bg-white px-4 py-2.5 font-medium text-slate-800 shadow-sm transition hover:bg-slate-50"
+            className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
             type="button"
           >
             Cancel
@@ -147,10 +145,10 @@ function Modal({
           <button
             disabled={busy}
             onClick={onSubmit}
-            className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-md bg-[#111827] dark:bg-purple-600 px-5 py-2 text-xs font-bold text-white hover:bg-black dark:hover:bg-purple-700 transition shadow-xs disabled:opacity-60"
             type="button"
           >
-            {busy ? <Loader2 size={16} className="animate-spin" /> : null}
+            {busy ? <Loader2 size={14} className="animate-spin" /> : null}
             {submitText}
           </button>
         </div>
@@ -276,72 +274,72 @@ export default function QuotationServicePage() {
   }
 
   return (
-    <div className="w-full">
+    <div className="space-y-6 animate-fade-in">
       <PageHeader
-        title="Quotation Service"
-        subtitle="Manage reusable service options for quotation creation"
+        title="Quotation Services"
+        subtitle="Manage reusable scope templates, service descriptions, and deliverables for quotation creation."
         total={filtered.length}
         search={q}
         onSearch={setQ}
         icon={<Settings2 size={18} />}
         rightActions={
-          <>
-            <button
-              onClick={() => void load()}
-              className="inline-flex items-center gap-2 rounded-md border border-[#233a47] bg-[#233a47] px-4 py-2.5 font-semibold text-white shadow-sm transition hover:bg-[#1c303b]"
-              type="button"
-            >
-              <RefreshCcw size={16} />
-              Refresh
-            </button>
-
+          <div className="flex items-center gap-2">
             <button
               onClick={openAdd}
-              className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2.5 font-semibold text-white shadow-sm transition hover:bg-slate-800"
+              className="inline-flex items-center gap-1.5 rounded-md bg-[#111827] dark:bg-purple-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-black dark:hover:bg-purple-700 transition shadow-2xs"
               type="button"
             >
-              <Plus size={18} />
+              <Plus size={14} />
               Add Service
             </button>
-          </>
+            <button
+              onClick={() => void load()}
+              className="inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-2xs"
+              type="button"
+            >
+              <RefreshCcw size={14} className={loading ? "animate-spin" : ""} />
+              Refresh
+            </button>
+          </div>
         }
       />
 
       {err ? (
-        <div className="mb-5 rounded-md border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-md border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 px-4 py-3 text-xs font-semibold text-red-700 dark:text-red-400">
           {err}
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-md border border-slate-200/70 bg-white shadow-sm">
+      {/* Table Card */}
+      <div className="overflow-hidden rounded-md border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs transition-colors">
         {loading ? (
-          <div className="flex items-center justify-center gap-2 p-10 text-slate-600">
-            <Loader2 className="animate-spin" size={18} />
+          <div className="flex items-center justify-center gap-2 p-12 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <Loader2 className="animate-spin text-blue-600" size={18} />
             Loading quotation services...
           </div>
         ) : filtered.length === 0 ? (
-          <div className="p-10 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-md border border-slate-200 bg-slate-50">
-              <Settings2 size={22} className="text-slate-600" />
+          <div className="p-12 text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-500">
+              <Settings2 size={20} />
             </div>
-            <div className="mt-3 text-lg font-semibold text-slate-900">No quotation services found</div>
-            <div className="mt-1 text-sm text-slate-600">
-              Click <span className="font-semibold">Add Service</span> to create one.
+            <div className="mt-3 text-sm font-bold text-slate-900 dark:text-white">No quotation services found</div>
+            <div className="mt-1 text-xs text-slate-400">
+              Click &apos;Add Service&apos; to create your first quotation template.
             </div>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[860px] text-sm">
-              <thead className="border-b border-slate-200 bg-slate-50">
-                <tr className="text-left">
-                  <th className="px-5 py-3 text-xs font-semibold text-slate-600">S.No</th>
-                  <th className="px-5 py-3 text-xs font-semibold text-slate-600">Service Name</th>
-                  <th className="px-5 py-3 text-xs font-semibold text-slate-600">Description Points</th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold text-slate-600">Actions</th>
+            <table className="w-full min-w-[860px] text-left text-xs border-collapse">
+              <thead className="border-b border-slate-200/70 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400">
+                <tr>
+                  <th className="px-5 py-3.5 w-16">S.No</th>
+                  <th className="px-5 py-3.5 w-64">Service Name</th>
+                  <th className="px-5 py-3.5">Description Deliverables</th>
+                  <th className="px-5 py-3.5 text-right w-36">Actions</th>
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/70">
                 {filtered.map((item, idx) => {
                   const descriptionLines = normalizeDescriptionForEditor(item.description)
                     .split(/\r?\n/)
@@ -351,47 +349,44 @@ export default function QuotationServicePage() {
                   return (
                     <tr
                       key={String(item.id ?? idx)}
-                      className={cn(
-                        "transition hover:bg-slate-50",
-                        idx % 2 === 0 ? "bg-white" : "bg-slate-50/40"
-                      )}
+                      className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition"
                     >
-                      <td className="px-5 py-4 font-semibold text-slate-700">{idx + 1}</td>
+                      <td className="px-5 py-4 font-bold text-slate-500 dark:text-slate-400">{idx + 1}</td>
                       <td className="px-5 py-4 align-top">
-                        <div className="font-semibold text-slate-900">{item.name}</div>
+                        <div className="font-bold text-slate-900 dark:text-white">{item.name}</div>
                       </td>
                       <td className="px-5 py-4">
                         {descriptionLines.length > 0 ? (
-                          <div className="space-y-1 text-slate-700">
+                          <div className="space-y-1.5">
                             {descriptionLines.map((line, lineIdx) => (
-                              <div key={`${item.id}-${lineIdx}`} className="rounded-md bg-slate-50 px-3 py-2">
+                              <div key={`${item.id}-${lineIdx}`} className="rounded-md bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 px-3 py-1.5 text-slate-700 dark:text-slate-300">
                                 {line}
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <span className="text-slate-400">No description</span>
+                          <span className="text-slate-400 italic">No description points configured</span>
                         )}
                       </td>
-                      <td className="px-5 py-4 text-right">
+                      <td className="px-5 py-4 text-right align-top">
                         <div className="inline-flex items-center gap-2">
                           <button
                             onClick={() => openEdit(item)}
-                            className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
+                            className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-2xs"
                             type="button"
                             title="Edit"
                           >
-                            <Pencil size={16} className="text-slate-700" />
+                            <Pencil size={14} />
                             Edit
                           </button>
 
                           <button
                             onClick={() => void onDelete(item.id)}
-                            className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-700 shadow-sm transition hover:bg-red-50"
+                            className="inline-flex items-center gap-1.5 rounded-md border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 px-2.5 py-1.5 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition shadow-2xs"
                             type="button"
                             title="Delete"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={14} />
                             Delete
                           </button>
                         </div>
@@ -410,7 +405,7 @@ export default function QuotationServicePage() {
         title={mode === "add" ? "Add Quotation Service" : "Edit Quotation Service"}
         subtitle={
           mode === "add"
-            ? "Create a reusable quotation service template."
+            ? "Create a reusable quotation service template with deliverables."
             : `Update quotation service #${editId ?? ""}`
         }
         onClose={closeModal}
@@ -419,33 +414,37 @@ export default function QuotationServicePage() {
         busy={busy}
       >
         {err ? (
-          <div className="mb-4 rounded-md border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <div className="rounded-md border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 px-3.5 py-2.5 text-xs font-semibold text-red-700 dark:text-red-400 mb-4">
             {err}
           </div>
         ) : null}
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-xs font-semibold text-slate-600">Service Name</label>
+            <label className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-200">
+              Service Name <span className="text-rose-500">*</span>
+            </label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Cyber Investigation"
-              className="w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 transition focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-300"
+              placeholder="e.g. Cyber Investigation & Forensics"
+              className="w-full rounded-md border border-slate-200/80 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 px-3.5 py-2 text-xs font-semibold text-slate-900 dark:text-white outline-none focus:border-blue-500"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-semibold text-slate-600">Description Points</label>
+            <label className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-200">
+              Deliverable Description Points (One per line)
+            </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={"Enter one point per line\nField verification\nBackground checks"}
-              rows={8}
-              className="w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 transition focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-300"
+              placeholder={"Enter one point per line\nField verification & analysis\nComprehensive report generation"}
+              rows={6}
+              className="w-full rounded-md border border-slate-200/80 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 px-3.5 py-2 text-xs font-medium text-slate-900 dark:text-white outline-none focus:border-blue-500 resize-none"
             />
-            <div className="mt-2 text-xs text-slate-500">
-              Each new line will be stored as a separate description point.
+            <div className="mt-1.5 text-[11px] text-slate-400">
+              Each new line will be parsed and formatted cleanly in quotation documents.
             </div>
           </div>
         </div>

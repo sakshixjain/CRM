@@ -277,6 +277,7 @@ exports.getAllLeads = async (req, res) => {
       is_active,
       search,
       assign_to,
+      assign_status,
       changed_by,
       whatsapp_chat,
       call_status,
@@ -299,7 +300,27 @@ exports.getAllLeads = async (req, res) => {
 
     if (status_id) whereClause.status_id = status_id;
     if (is_active !== undefined) whereClause.is_active = is_active === "true";
-    if (assign_to) whereClause.assign_to = assign_to;
+    const isAgent =
+      req.user?.type === "agent" ||
+      (req.user?.role_id !== undefined && Number(req.user.role_id) !== 1);
+
+    if (isAgent) {
+      // STRICT Agent Isolation: Agents only see leads assigned directly to them
+      whereClause.assign_to = req.user.id;
+    } else {
+      // Admin filter options
+      if (assign_status === "assigned") {
+        whereClause.assign_to = {
+          [Op.and]: [{ [Op.ne]: null }, { [Op.ne]: 0 }],
+        };
+      } else if (assign_status === "unassigned") {
+        whereClause[Op.or] = [{ assign_to: null }, { assign_to: 0 }];
+      } else if (assign_status === "my_leads") {
+        whereClause.assign_to = req.user.id;
+      } else if (assign_to) {
+        whereClause.assign_to = assign_to;
+      }
+    }
     if (source_id) whereClause.source_id = source_id;
     if (case_type) whereClause.case_type = case_type;
     if (changed_by) whereClause.changed_by = changed_by;
@@ -681,6 +702,125 @@ exports.deleteLead = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: error.message || "Error deleting lead",
+    });
+  }
+};
+
+exports.bulkAssignLeads = async (req, res) => {
+  try {
+    const companyId = req.user?.company_id;
+    const userId = req.user?.id;
+    const { lead_ids, assign_to } = req.body;
+
+    if (!companyId || !userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    if (!Array.isArray(lead_ids) || lead_ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "lead_ids array is required",
+      });
+    }
+
+    let agentName = "Unassigned";
+    let targetAssignTo = null;
+
+    if (assign_to) {
+      const agent = await Agent.findOne({
+        where: { id: assign_to, company_id: companyId },
+      });
+      if (!agent) {
+        return res.status(404).json({
+          success: false,
+          message: "Selected agent not found",
+        });
+      }
+      agentName = agent.name;
+      targetAssignTo = agent.id;
+    }
+
+    const [updatedCount] = await Lead.update(
+      {
+        assign_to: targetAssignTo,
+        changed_by: userId,
+      },
+      {
+        where: {
+          id: { [Op.in]: lead_ids },
+          company_id: companyId,
+        },
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      updatedCount,
+      message: `${updatedCount} lead(s) successfully assigned to ${agentName}`,
+    });
+  } catch (error) {
+    console.error("bulkAssignLeads error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Error bulk assigning leads",
+    });
+  }
+};
+
+exports.getLeadStats = async (req, res) => {
+  try {
+    const companyId = req.user?.company_id;
+    if (!companyId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const isAgent =
+      req.user?.type === "agent" ||
+      (req.user?.role_id !== undefined && Number(req.user.role_id) !== 1);
+
+    if (isAgent) {
+      const myCount = await Lead.count({
+        where: { company_id: companyId, assign_to: req.user.id },
+      });
+      return res.status(200).json({
+        success: true,
+        data: {
+          total: myCount,
+          assigned: myCount,
+          unassigned: 0,
+          myLeads: myCount,
+        },
+      });
+    }
+
+    const [total, assigned, unassigned, myLeads] = await Promise.all([
+      Lead.count({ where: { company_id: companyId } }),
+      Lead.count({
+        where: {
+          company_id: companyId,
+          assign_to: { [Op.and]: [{ [Op.ne]: null }, { [Op.ne]: 0 }] },
+        },
+      }),
+      Lead.count({
+        where: {
+          company_id: companyId,
+          [Op.or]: [{ assign_to: null }, { assign_to: 0 }],
+        },
+      }),
+      Lead.count({ where: { company_id: companyId, assign_to: req.user.id } }),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      data: { total, assigned, unassigned, myLeads },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Error fetching lead stats",
     });
   }
 };

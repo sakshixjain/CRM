@@ -11,6 +11,8 @@ const QuotationService = require("./QuotationService");
 const Webhook = require("./Webhook");
 const FieldWork = require("./FieldWork");
 const Quotation = require("./Quotation");
+const EmailTemplate = require("./EmailTemplate");
+const SmtpSetting = require("./SmtpSetting");
 
 /* -------------------- Roles -------------------- */
 
@@ -43,4 +45,6 @@ module.exports = {
   QuotationService,
   Quotation,
   Webhook,
+  EmailTemplate,
+  SmtpSetting,
 };

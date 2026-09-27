@@ -31,6 +31,9 @@ import {
   EyeOff,
   Eye,
   CheckCircle2,
+  Mail,
+  Send,
+  Sparkles,
 } from "lucide-react";
 
 type MiniUser = { id: number; name?: string; email?: string };
@@ -536,7 +539,16 @@ function SourceBadge({ sourceId }: { sourceId: number | null }) {
   const source = sources.find((s) => s.id === sourceId);
 
   return (
-    <span className="inline-flex items-center px-3 py-1 text-xs font-semibold border rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800">
+    <span className={cn(
+      "inline-flex items-center px-3 py-1 text-xs font-semibold border rounded-full",
+      String(source?.name || "").toLowerCase().includes("whatsapp")
+        ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+        : String(source?.name || "").toLowerCase().includes("google")
+        ? "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-800"
+        : String(source?.name || "").toLowerCase().includes("meta") || String(source?.name || "").toLowerCase().includes("fb")
+        ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800"
+        : "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
+    )}>
       <Circle className="w-2 h-2 mr-2" />
       {source?.name || "Unknown"}
     </span>
@@ -1763,6 +1775,9 @@ function LeadsTable({
   // onWhatsappChange,
   isAdmin,
   total,
+  selectedLeadIds = [],
+  onToggleSelectLead,
+  onToggleSelectAll,
 }: {
   loading: boolean;
   pageRows: Lead[];
@@ -1777,6 +1792,9 @@ function LeadsTable({
   // onWhatsappChange: (lead: Lead, value: string) => Promise<void> | void;
   isAdmin: boolean;
   total: number;
+  selectedLeadIds?: number[];
+  onToggleSelectLead?: (id: number) => void;
+  onToggleSelectAll?: () => void;
 }) {
   const navigate = useNavigate();
   const { statuses } = useStatuses();
@@ -1786,6 +1804,15 @@ function LeadsTable({
       <table className="w-full min-w-full">
         <thead className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800">
           <tr>
+            <th className="px-3 py-4 text-center w-10">
+              <input
+                type="checkbox"
+                checked={pageRows.length > 0 && pageRows.every((r) => selectedLeadIds.includes(r.id))}
+                onChange={onToggleSelectAll}
+                className="rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                title="Select all on this page"
+              />
+            </th>
             <th className="px-2 py-4 text-left text-xs font-bold text-slate-700">S.No</th>
             <th className="px-2 py-4 text-left text-xs font-bold text-slate-700">Actions</th>
             <th className="px-6 py-4 text-left text-xs font-bold text-slate-700">Lead</th>
@@ -1845,6 +1872,14 @@ function LeadsTable({
                       highlighted ? "outline outline-2 outline-blue-500 outline-offset-[-2px]" : ""
                     )}
                   >
+                    <td className="px-3 py-4 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedLeadIds.includes(r.id)}
+                        onChange={() => onToggleSelectLead?.(r.id)}
+                        className="rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                      />
+                    </td>
                     <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-semibold">{sno}</td>
 
                     <td className="px-6 py-4">
@@ -1887,7 +1922,14 @@ function LeadsTable({
                     </td>
 
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-slate-900 dark:text-white">{r.name || "-"}</div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-semibold text-slate-900 dark:text-white">{r.name || "-"}</span>
+                        {r.city && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                            {r.city}
+                          </span>
+                        )}
+                      </div>
                       <div className="text-xs text-slate-600 dark:text-slate-400">{r.email || "-"}</div>
                     </td>
 
@@ -2118,6 +2160,209 @@ function LeadsTable({
   );
 }
 
+function BulkEmailModal({
+  open,
+  selectedLeadIds,
+  onClose,
+  onSuccess,
+}: {
+  open: boolean;
+  selectedLeadIds: number[];
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<number | "">("");
+  const [subject, setSubject] = useState("");
+  const [bodyHtml, setBodyHtml] = useState("");
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      api.email
+        .getTemplates()
+        .then((res: any) => {
+          const list = res?.data || [];
+          setTemplates(list);
+        })
+        .catch((err) => console.error("Failed to load templates", err));
+    }
+  }, [open]);
+
+  const handleTemplateSelect = (id: number | "") => {
+    setSelectedTemplateId(id);
+    if (!id) return;
+    const t = templates.find((tpl) => tpl.id === Number(id));
+    if (t) {
+      setSubject(t.subject || "");
+      setBodyHtml(t.body_html || "");
+    }
+  };
+
+  const insertVariable = (tag: string) => {
+    setBodyHtml((prev) => prev + ` ${tag} `);
+  };
+
+  const handleSend = async () => {
+    if (!subject.trim()) {
+      toast.error("Subject is required");
+      return;
+    }
+    if (!bodyHtml.trim()) {
+      toast.error("Email body is required");
+      return;
+    }
+    setSending(true);
+    const toastId = toast.loading(`Sending emails to ${selectedLeadIds.length} lead(s)...`);
+    try {
+      const res: any = await api.email.sendBulkSelected({
+        lead_ids: selectedLeadIds,
+        subject,
+        body_html: bodyHtml,
+      });
+      const data = res?.data;
+      toast.success(
+        `Email broadcast complete! Sent: ${data?.sentCount ?? 0}, Failed: ${data?.failedCount ?? 0}`,
+        { id: toastId, duration: 5000 }
+      );
+      onSuccess();
+      onClose();
+    } catch (error: any) {
+      console.error("Bulk email error:", error);
+      toast.error(error?.response?.data?.message || "Failed to send bulk emails", { id: toastId });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+      <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <Mail size={18} />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                Send Bulk Email
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Broadcasting to {selectedLeadIds.length} selected lead{selectedLeadIds.length > 1 ? "s" : ""}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-4 overflow-y-auto flex-1">
+          {/* Template picker */}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+              Choose from Email Templates (Optional)
+            </label>
+            <select
+              value={selectedTemplateId}
+              onChange={(e) => handleTemplateSelect(e.target.value ? Number(e.target.value) : "")}
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">-- Start from scratch or select template --</option>
+              {templates.map((tpl) => (
+                <option key={tpl.id} value={tpl.id}>
+                  {tpl.name} ({tpl.category}) - {tpl.subject}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Subject */}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+              Subject Line *
+            </label>
+            <input
+              type="text"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder="e.g. Special update regarding your inquiry"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            />
+          </div>
+
+          {/* Insertable variables */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                Email Body (HTML or Plain Text) *
+              </label>
+              <span className="text-[10px] text-slate-500 flex items-center gap-1">
+                <Sparkles size={11} className="text-amber-500" /> Insert Variable Tags:
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {["{{name}}", "{{city}}", "{{phone}}", "{{email}}"].map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => insertVariable(tag)}
+                  className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-[11px] font-mono font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition"
+                >
+                  +{tag}
+                </button>
+              ))}
+            </div>
+            <textarea
+              rows={8}
+              value={bodyHtml}
+              onChange={(e) => setBodyHtml(e.target.value)}
+              placeholder="<p>Dear {{name}},</p><p>Thank you for connecting from {{city}}...</p>"
+              className="w-full px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            />
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSend}
+            disabled={sending || !subject.trim() || !bodyHtml.trim()}
+            className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-xs font-semibold text-white transition shadow-sm flex items-center gap-2"
+          >
+            {sending ? (
+              <>
+                <Loader2 size={14} className="animate-spin" />
+                Sending Broadcast...
+              </>
+            ) : (
+              <>
+                <Send size={14} />
+                Send to {selectedLeadIds.length} Recipient{selectedLeadIds.length > 1 ? "s" : ""}
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Page
 export default function Leads() {
   const { statuses } = useStatuses();
@@ -2134,6 +2379,20 @@ export default function Leads() {
 
   const [q, setQ] = useState(() => searchParams.get("search") || "");
   const perPage = 10;
+  const [assignStatusTab, setAssignStatusTab] = useState<"all" | "assigned" | "unassigned" | "my_leads">("all");
+  const [leadStats, setLeadStats] = useState<{ total: number; assigned: number; unassigned: number; myLeads: number }>({
+    total: 0,
+    assigned: 0,
+    unassigned: 0,
+    myLeads: 0,
+  });
+  const [selectedLeadIds, setSelectedLeadIds] = useState<number[]>([]);
+  const [bulkAssignAgentId, setBulkAssignAgentId] = useState<number | "">("");
+  const [bulkAssigning, setBulkAssigning] = useState(false);
+  const [bulkEmailModalOpen, setBulkEmailModalOpen] = useState(false);
+  const [bulkEmailSubject, setBulkEmailSubject] = useState("");
+  const [bulkEmailHtml, setBulkEmailHtml] = useState("");
+  const [bulkEmailSending, setBulkEmailSending] = useState(false);
   const [page, setPage] = useState(1);
 
   const [filterSource, setFilterSource] = useState<number | "">("");
@@ -2254,6 +2513,7 @@ export default function Leads() {
         call_status: callStatus || undefined,
         status_id: filterStatus || undefined,
         assign_to: filterAgent || undefined,
+        assign_status: assignStatusTab === "all" ? undefined : assignStatusTab,
         // whatsapp_chat: filterWhatsapp || undefined,
         changed_by: filterChangedBy || undefined,
         fromDate: fromDate || undefined,
@@ -2274,6 +2534,9 @@ export default function Leads() {
       setRows(normalized);
       setTotal(pg?.total ?? 0);
       setServerTotalPages(pg?.totalPages ?? 1);
+      api.leads.stats().then((res: any) => {
+        if (res?.data) setLeadStats(res.data);
+      }).catch(() => {});
       setOpenRowId(null);
     } catch (error) {
       console.error("Failed to load leads:", error);
@@ -2301,7 +2564,7 @@ export default function Leads() {
 
   useEffect(() => {
     loadAll(page);
-  }, [page, q, filterSource,callStatus, filterStatus, filterAgent, filterChangedBy, fromDate, toDate]);
+  }, [page, q, assignStatusTab, filterSource, callStatus, filterStatus, filterAgent, filterChangedBy, fromDate, toDate]);
 
   useEffect(() => {
     if (!searchParams.has("search")) return;
@@ -2319,7 +2582,7 @@ export default function Leads() {
 
   useEffect(() => {
     setPage(1);
-  }, [q, filterSource,callStatus,  filterStatus, filterAgent, filterChangedBy, fromDate, toDate]);
+  }, [q, assignStatusTab, filterSource, callStatus, filterStatus, filterAgent, filterChangedBy, fromDate, toDate]);
 
   function parseDateInputLocal(s: string) {
     const [y, m, d] = s.split("-").map(Number);
@@ -2703,6 +2966,50 @@ export default function Leads() {
     }
   };
 
+  const handleToggleSelectLead = (id: number) => {
+    setSelectedLeadIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleToggleSelectAll = () => {
+    const pageIds = pageRows.map((r) => r.id);
+    const allSelected = pageIds.length > 0 && pageIds.every((id) => selectedLeadIds.includes(id));
+    if (allSelected) {
+      setSelectedLeadIds((prev) => prev.filter((id) => !pageIds.includes(id)));
+    } else {
+      setSelectedLeadIds((prev) => Array.from(new Set([...prev, ...pageIds])));
+    }
+  };
+
+  const handleBulkAssign = async () => {
+    if (!bulkAssignAgentId) {
+      toast.error("Please select an agent to assign");
+      return;
+    }
+    if (selectedLeadIds.length === 0) {
+      toast.error("No leads selected");
+      return;
+    }
+    setBulkAssigning(true);
+    const toastId = toast.loading(`Assigning ${selectedLeadIds.length} lead(s)...`);
+    try {
+      await api.leads.bulkAssign({
+        lead_ids: selectedLeadIds,
+        agent_id: Number(bulkAssignAgentId),
+      });
+      toast.success(`Assigned ${selectedLeadIds.length} lead(s) successfully!`, { id: toastId });
+      setSelectedLeadIds([]);
+      setBulkAssignAgentId("");
+      await loadAll(page);
+    } catch (error: any) {
+      console.error("Failed bulk assign:", error);
+      toast.error(error?.response?.data?.message || "Failed to bulk assign leads", { id: toastId });
+    } finally {
+      setBulkAssigning(false);
+    }
+  };
+
   const deleteLead = (lead: Lead) => openDelete(lead);
 
   return (
@@ -2725,6 +3032,174 @@ export default function Leads() {
           </button>
         }
       />
+
+      {/* Tabs for Lead Allocation Status */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <button
+          type="button"
+          onClick={() => setAssignStatusTab("all")}
+          className={cn(
+            "px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition shadow-xs",
+            assignStatusTab === "all"
+              ? "bg-slate-900 dark:bg-blue-600 text-white shadow-sm"
+              : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+          )}
+        >
+          <span>All Leads</span>
+          <span
+            className={cn(
+              "px-2 py-0.5 rounded-full text-[10px] font-bold",
+              assignStatusTab === "all"
+                ? "bg-white/20 text-white"
+                : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+            )}
+          >
+            {leadStats.total || total}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setAssignStatusTab("assigned")}
+          className={cn(
+            "px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition shadow-xs",
+            assignStatusTab === "assigned"
+              ? "bg-emerald-600 text-white shadow-sm"
+              : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+          )}
+        >
+          <CheckCircle2 size={13} />
+          <span>Assigned Leads</span>
+          <span
+            className={cn(
+              "px-2 py-0.5 rounded-full text-[10px] font-bold",
+              assignStatusTab === "assigned"
+                ? "bg-white/20 text-white"
+                : "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+            )}
+          >
+            {leadStats.assigned}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setAssignStatusTab("unassigned")}
+          className={cn(
+            "px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition shadow-xs",
+            assignStatusTab === "unassigned"
+              ? "bg-amber-600 text-white shadow-sm"
+              : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+          )}
+        >
+          <Circle size={13} />
+          <span>Unassigned Leads</span>
+          <span
+            className={cn(
+              "px-2 py-0.5 rounded-full text-[10px] font-bold",
+              assignStatusTab === "unassigned"
+                ? "bg-white/20 text-white"
+                : "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
+            )}
+          >
+            {leadStats.unassigned}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setAssignStatusTab("my_leads")}
+          className={cn(
+            "px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition shadow-xs",
+            assignStatusTab === "my_leads"
+              ? "bg-indigo-600 text-white shadow-sm"
+              : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+          )}
+        >
+          <User size={13} />
+          <span>My Leads</span>
+          <span
+            className={cn(
+              "px-2 py-0.5 rounded-full text-[10px] font-bold",
+              assignStatusTab === "my_leads"
+                ? "bg-white/20 text-white"
+                : "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800"
+            )}
+          >
+            {leadStats.myLeads}
+          </span>
+        </button>
+      </div>
+
+      {/* Floating Bulk Action Bar */}
+      {selectedLeadIds.length > 0 && (
+        <div className="sticky top-4 z-20 mb-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-xl p-3 sm:p-4 shadow-xl border border-indigo-500/30 flex flex-wrap items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center font-bold text-sm text-indigo-300">
+              {selectedLeadIds.length}
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white">
+                {selectedLeadIds.length} lead{selectedLeadIds.length > 1 ? "s" : ""} selected
+              </div>
+              <div className="text-xs text-indigo-200/70">
+                Apply bulk actions to selected leads
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            {isAdmin && (
+              <div className="flex items-center gap-1.5 bg-white/10 dark:bg-slate-800/80 p-1 rounded-lg border border-white/10">
+                <select
+                  value={bulkAssignAgentId}
+                  onChange={(e) =>
+                    setBulkAssignAgentId(e.target.value ? Number(e.target.value) : "")
+                  }
+                  className="bg-slate-900 text-white text-xs rounded-md px-2.5 py-1.5 border border-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                >
+                  <option value="">Choose Agent to Assign</option>
+                  {agents.map((a: any) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name || a.email} {a.city ? `(${a.city})` : ""}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={handleBulkAssign}
+                  disabled={!bulkAssignAgentId || bulkAssigning}
+                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold rounded-md transition shadow-xs flex items-center gap-1.5"
+                >
+                  {bulkAssigning ? (
+                    <Loader2 size={13} className="animate-spin" />
+                  ) : (
+                    <Users size={13} />
+                  )}
+                  Assign
+                </button>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setBulkEmailModalOpen(true)}
+              className="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-2"
+            >
+              <Mail size={14} />
+              Send Bulk Email ({selectedLeadIds.length})
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedLeadIds([])}
+              className="px-2.5 py-2 bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-semibold rounded-lg transition"
+            >
+              Deselect All
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white dark:bg-[#1E293B] rounded-md border border-slate-200/70 dark:border-slate-800 shadow-xs p-4 sm:p-5 mb-6 transition-colors">
         <div className="grid grid-cols-1 md:grid-cols-8 gap-3">
@@ -2856,6 +3331,9 @@ export default function Leads() {
           // onWhatsappChange={onWhatsappChange}
           isAdmin={isAdmin}
           total={total}
+          selectedLeadIds={selectedLeadIds}
+          onToggleSelectLead={handleToggleSelectLead}
+          onToggleSelectAll={handleToggleSelectAll}
         />
 
         <div className="border-t border-slate-200 dark:border-slate-800 p-4 sm:p-5 bg-white dark:bg-[#1E293B]">
@@ -2946,6 +3424,16 @@ export default function Leads() {
         name={user?.name || user?.email || "Team"}
         context={congratsContext}
         onClose={() => setCongratsOpen(false)}
+      />
+
+      <BulkEmailModal
+        open={bulkEmailModalOpen}
+        selectedLeadIds={selectedLeadIds}
+        onClose={() => setBulkEmailModalOpen(false)}
+        onSuccess={() => {
+          setSelectedLeadIds([]);
+          loadAll(page);
+        }}
       />
     </div>
   );

@@ -155,6 +155,35 @@ async function ensureWebhookTable() {
   }
 }
 
+async function ensureAgentTableColumns() {
+  try {
+    const queryInterface = sequelize.getQueryInterface();
+    const table = await queryInterface.describeTable("agents");
+    if (!table.city) {
+      await queryInterface.addColumn("agents", "city", {
+        type: require("sequelize").DataTypes.STRING(100),
+        allowNull: true,
+        defaultValue: null,
+      });
+      console.log('Added missing "city" column to agents table');
+    }
+  } catch (error) {
+    console.error('Unable to ensure "city" column on agents table:', error.message);
+  }
+}
+
+async function ensureEmailTables() {
+  try {
+    const EmailTemplate = require("./models/EmailTemplate");
+    const SmtpSetting = require("./models/SmtpSetting");
+    await EmailTemplate.sync();
+    await SmtpSetting.sync();
+    console.log("Email templates & SMTP settings tables synced OK");
+  } catch (error) {
+    console.error("Unable to sync email tables:", error.message);
+  }
+}
+
 app.use(
   cors({
     origin: ['http://localhost:5173', 'https://owss.in'],
@@ -164,8 +193,10 @@ app.use(
 app.use(express.json());
 
 // Routes
+const EmailRoutes = require("./routes/EmailRoute");
 app.use("/", AuthRoutes);
 app.use("/api/", LeadRoute);
+app.use("/api/email", EmailRoutes);
 
 // Health check
 app.get("/health", (req, res) =>
@@ -185,6 +216,8 @@ async function start() {
     await ensureLeadTableColumns();
     await ensurePaymentTableColumns();
     await ensureWebhookTable();
+    await ensureAgentTableColumns();
+    await ensureEmailTables();
 
     if (process.env.NODE_ENV !== "production") {
       console.log("Tables synced (development mode)");

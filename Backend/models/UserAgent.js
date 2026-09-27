@@ -38,7 +38,11 @@ const Agent = sequelize.define("Agent", {
     allowNull: false, 
     defaultValue: true,
   },
-
+  city: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+    defaultValue: null,
+  },
 }, {
   tableName: "agents",
   timestamps: true,

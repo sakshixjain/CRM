@@ -1,8 +1,32 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
-import { Bar, BarChart, CartesianGrid, Cell, ComposedChart, Legend, Line, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { BriefcaseBusiness, FileText, IndianRupee, RefreshCcw } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ComposedChart,
+  Legend,
+  Line,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
+  BriefcaseBusiness,
+  FileText,
+  IndianRupee,
+  RefreshCcw,
+  CheckCircle2,
+  Clock,
+  LayoutDashboard,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import ChartCard from "../charts/ChartCard";
+import PageHeader from "./Header";
 import { api } from "../lib/api";
 
 type QuotationRow = {
@@ -117,12 +141,11 @@ function FilterPill({
     <button
       type="button"
       onClick={onClick}
-      className={[
-        "rounded-md border px-3 py-1 text-sm font-semibold transition",
+      className={`rounded-md px-3.5 py-1.5 text-xs font-bold transition ${
         active
-          ? "border-slate-900 bg-slate-900 text-white shadow-[0_10px_28px_rgba(0,0,0,0.18)]"
-          : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
-      ].join(" ")}
+          ? "bg-[#111827] dark:bg-purple-600 text-white shadow-xs"
+          : "border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+      }`}
     >
       {children}
     </button>
@@ -141,14 +164,14 @@ function KpiCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="rounded-md border border-slate-200 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.06)]">
+    <div className="rounded-md border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="text-sm text-slate-500">{title}</div>
-          <div className="mt-1 text-2xl font-extrabold text-slate-900">{value}</div>
-          <div className="text-[12px] text-slate-500">{subtitle}</div>
+          <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">{title}</div>
+          <div className="mt-1 text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">{value}</div>
+          <div className="text-[11px] text-slate-400 mt-0.5">{subtitle}</div>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-slate-800">
+        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-2xs">
           {icon}
         </div>
       </div>
@@ -304,19 +327,35 @@ export default function QuotationDashboard() {
   const pendingCount = statusData.find((item) => item.name === "Pending")?.value || 0;
   const partialCount = statusData.find((item) => item.name === "Partial")?.value || 0;
   const convertedCount = statusData.find((item) => item.name === "Converted")?.value || 0;
-  const conversionRate = totalQuotes > 0 ? ((convertedCount / totalQuotes) * 100).toFixed(2) : "0.00";
+
+  const conversionRate = totalQuotes > 0 ? ((convertedCount / totalQuotes) * 100).toFixed(1) : "0.0";
+
+  const pieColors = ["#f59e0b", "#3b82f6", "#10b981"];
+  const serviceColors = ["#8b5cf6", "#3b82f6", "#06b6d4", "#10b981", "#f59e0b", "#ec4899"];
 
   return (
-    <div className="w-full">
+    <div className="space-y-6 animate-fade-in">
+      <PageHeader
+        title="Quotation Dashboard"
+        subtitle="Live quotation metrics, revenue conversion, and service performance"
+        total={totalQuotes}
+        icon={<LayoutDashboard size={18} />}
+        rightActions={
+          <button
+            type="button"
+            onClick={() => void refresh()}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-md bg-[#111827] dark:bg-purple-600 hover:bg-black dark:hover:bg-purple-700 text-white text-xs font-bold transition shadow-2xs"
+          >
+            <RefreshCcw size={14} className={loading ? "animate-spin" : ""} />
+            Refresh Data
+          </button>
+        }
+      />
 
-      <div className="mb-2 rounded-md border border-slate-200 bg-white p-3 shadow-[0_10px_28px_rgba(15,23,42,0.06)] sm:p-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Quotation Dashboard</h2>
-            <p className="mt-1 text-sm text-slate-600">Filter quotation insights by date range</p>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-end gap-2">
+      {/* Filter Ribbon Card */}
+      <div className="rounded-md border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-colors">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <FilterPill active={range === "today"} onClick={() => setRange("today")}>
               Today
             </FilterPill>
@@ -324,42 +363,36 @@ export default function QuotationDashboard() {
               Yesterday
             </FilterPill>
             <FilterPill active={range === "week"} onClick={() => setRange("week")}>
-              Week
+              Last 7 Days
             </FilterPill>
             <FilterPill active={range === "month"} onClick={() => setRange("month")}>
               This Month
             </FilterPill>
             <FilterPill active={range === "year"} onClick={() => setRange("year")}>
-              Year
+              Full Year
             </FilterPill>
+          </div>
 
-            {range === "year" ? (
+          <div className="flex items-center gap-2">
+            {range === "year" && (
               <select
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
-                className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                className="rounded-md border border-slate-200/80 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-900 dark:text-white outline-none focus:border-blue-500"
               >
                 {availableYears.map((item) => (
-                  <option key={item} value={item}>
+                  <option key={item} value={item} className="dark:bg-slate-900">
                     {item}
                   </option>
                 ))}
               </select>
-            ) : null}
-
-            <button
-              type="button"
-              onClick={() => void refresh()}
-              className="inline-flex items-center gap-2 rounded-md bg-black px-4 py-2 font-semibold text-white transition hover:bg-slate-900"
-            >
-              <RefreshCcw size={16} className={loading ? "animate-spin" : ""} />
-              Refresh
-            </button>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="mb-2 grid grid-cols-1 gap-3 md:grid-cols-3 xl:grid-cols-6">
+      {/* KPI Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         <KpiCard
           title="Total Quotes"
           value={loading ? "-" : totalQuotes}
@@ -369,7 +402,7 @@ export default function QuotationDashboard() {
         <KpiCard
           title="Service Types"
           value={loading ? "-" : totalServices}
-          subtitle="Distinct quotation services"
+          subtitle="Distinct services"
           icon={<BriefcaseBusiness size={18} />}
         />
         <KpiCard
@@ -382,23 +415,24 @@ export default function QuotationDashboard() {
           title="Pending"
           value={loading ? "-" : pendingCount}
           subtitle="Awaiting payment"
-          icon={<FileText size={18} />}
+          icon={<Clock size={18} />}
         />
         <KpiCard
           title="Partial"
           value={loading ? "-" : partialCount}
-          subtitle="First payment received"
+          subtitle="Advance received"
           icon={<RefreshCcw size={18} />}
         />
         <KpiCard
           title="Converted"
           value={loading ? "-" : convertedCount}
-          subtitle="Both payments complete"
-          icon={<BriefcaseBusiness size={18} />}
+          subtitle="Fully completed"
+          icon={<CheckCircle2 size={18} />}
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-2 xl:grid-cols-12">
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
         <div className="xl:col-span-12">
           <ChartCard
             title={`Monthly Quotation Overview (${range === "year" ? year : "Selected Range"})`}
@@ -406,34 +440,35 @@ export default function QuotationDashboard() {
             value={loading ? "-" : `${monthlyData.reduce((sum, item) => sum + item.quoteCount, 0)} quotes`}
             icon={<FileText size={18} />}
           >
-            <div className="h-[350px]">
+            <div className="h-[340px]">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={monthlyData} margin={{ top: 8, right: 0, left: 0, bottom: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="month" tick={{ fill: "#475569", fontSize: 12 }} />
+                <ComposedChart data={monthlyData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.4} />
+                  <XAxis dataKey="month" tick={{ fill: "#64748b", fontSize: 11 }} />
                   <YAxis
                     yAxisId="left"
-                    tick={{ fill: "#475569", fontSize: 12 }}
+                    tick={{ fill: "#64748b", fontSize: 11 }}
                     tickFormatter={(value) => formatCompactCurrency(Number(value))}
                   />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fill: "#475569", fontSize: 12 }} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fill: "#64748b", fontSize: 11 }} />
                   <Tooltip
-                    formatter={(value: number | string | undefined, name: string | undefined) =>
-                      name === "totalAmount"
+                    contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155", borderRadius: "6px", color: "#fff", fontSize: "12px" }}
+                    formatter={(value: any, name: any) =>
+                      name === "Total Amount"
                         ? [formatCurrency(Number(value || 0)), "Total Amount"]
                         : [Number(value || 0), "Quotes"]
                     }
                   />
-                  <Legend />
-                  <Bar yAxisId="right" dataKey="quoteCount" name="Quotes" fill="#f59e0b" radius={[6, 6, 0, 0]} />
+                  <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }} />
+                  <Bar yAxisId="right" dataKey="quoteCount" name="Quotes" fill="#f59e0b" radius={[4, 4, 0, 0]} />
                   <Line
                     yAxisId="left"
                     type="monotone"
                     dataKey="totalAmount"
                     name="Total Amount"
-                    stroke="#1e3a8a"
-                    strokeWidth={3}
-                    dot={{ r: 4 }}
+                    stroke="#6366f1"
+                    strokeWidth={2.5}
+                    dot={{ r: 3 }}
                   />
                 </ComposedChart>
               </ResponsiveContainer>
@@ -441,59 +476,61 @@ export default function QuotationDashboard() {
           </ChartCard>
         </div>
 
-       <div className="xl:col-span-5">
+        <div className="xl:col-span-5">
           <ChartCard
             title="Quotation Statuses"
-            subtitle="Pending, partial, and converted"
+            subtitle="Pending, partial, and converted distribution"
             value={`${conversionRate}% converted`}
             icon={<FileText size={18} />}
           >
-            <div className="h-[330px]">
+            <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
+                  <Tooltip
+                    contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155", borderRadius: "6px", color: "#fff", fontSize: "12px" }}
+                  />
                   <Pie
                     data={statusData}
                     dataKey="value"
                     nameKey="name"
                     cx="50%"
-                    cy="45%"
-                    outerRadius={108}
-                    innerRadius={60}
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={85}
                     paddingAngle={3}
                   >
-                    {statusData.map((entry) => {
-                      const fill =
-                        entry.name === "Converted"
-                          ? "#10b981"
-                          : entry.name === "Partial"
-                            ? "#0ea5e9"
-                            : "#f59e0b";
-                      return <Cell key={entry.name} fill={fill} />;
-                    })}
+                    {statusData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+                    ))}
                   </Pie>
-                  <Tooltip formatter={(value: number | string | undefined) => [`${Number(value || 0)} quotations`, "Count"]} />
-                  <Legend verticalAlign="bottom" />
+                  <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </ChartCard>
-        </div> 
+        </div>
 
         <div className="xl:col-span-7">
           <ChartCard
-            title="Service Popularity"
-            subtitle="Most-used quotation services"
-            value={loading ? "-" : `${servicePopularity.length} services`}
+            title="Top Services Quoted"
+            subtitle="Most frequently requested services"
+            value={`${servicePopularity.length} services`}
             icon={<BriefcaseBusiness size={18} />}
           >
-            <div className="h-[330px]">
+            <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={servicePopularity} margin={{ top: 8, right: 0, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="name" angle={-20} textAnchor="end" height={70} tick={{ fill: "#475569", fontSize: 12 }} />
-                  <YAxis allowDecimals={false} tick={{ fill: "#475569", fontSize: 12 }} />
-                  <Tooltip formatter={(value: number | string | undefined) => [`${Number(value || 0)} quotations`, "Count"]} />
-                  <Bar dataKey="value" fill="#0f766e" radius={[6, 6, 0, 0]} />
+                <BarChart data={servicePopularity.slice(0, 6)} layout="vertical" margin={{ top: 5, right: 20, left: 40, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.4} />
+                  <XAxis type="number" tick={{ fill: "#64748b", fontSize: 11 }} />
+                  <YAxis type="category" dataKey="name" tick={{ fill: "#64748b", fontSize: 11 }} width={120} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155", borderRadius: "6px", color: "#fff", fontSize: "12px" }}
+                  />
+                  <Bar dataKey="value" name="Quotations" radius={[0, 4, 4, 0]}>
+                    {servicePopularity.slice(0, 6).map((_, index) => (
+                      <Cell key={`cell-service-${index}`} fill={serviceColors[index % serviceColors.length]} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>

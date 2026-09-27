@@ -19,11 +19,11 @@ export default function PageHeader({
   rightActions?: React.ReactNode;
 }) {
   return (
-    <div className="mb-6 rounded-md border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-[#1E293B] p-5 shadow-xs transition-colors">
+    <div className="mb-6 rounded-md border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs transition-colors">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         {/* LEFT */}
         <div className="flex items-center gap-3.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#111C44]/10 dark:bg-white/10 text-[#111C44] dark:text-white font-extrabold shadow-2xs">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#111827] dark:bg-purple-600 text-white font-extrabold shadow-2xs">
             {icon}
           </div>
           <div>

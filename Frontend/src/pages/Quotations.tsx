@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PageHeader from "./Header";
-import { CheckCircle2, FileText, Pencil, Printer, RefreshCcw, Save, X } from "lucide-react";
+import { CheckCircle2, FileText, Pencil, Plus, Printer, RefreshCcw, Save, X } from "lucide-react";
 import { api } from "../lib/api";
 import toast from "react-hot-toast";
 import { openQuotationPrintWindow } from "../lib/quotationPrint";
@@ -115,161 +116,75 @@ function ConversionCongratsModal({
           0%, 100% { transform: scale(1); opacity: 0.62; }
           50% { transform: scale(1.16); opacity: 0.18; }
         }
-        @keyframes crm-shine {
-          0% { transform: translateX(-130%) rotate(18deg); opacity: 0; }
-          28% { opacity: 0.45; }
-          100% { transform: translateX(150%) rotate(18deg); opacity: 0; }
-        }
-        @keyframes crm-badge-bob {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-4px); }
-        }
       `}</style>
       <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-md" onClick={onClose} />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(16,185,129,0.28),transparent_32%),radial-gradient(circle_at_18%_70%,rgba(251,191,36,0.18),transparent_26%),radial-gradient(circle_at_82%_72%,rgba(56,189,248,0.18),transparent_28%)]" />
-      <div className="pointer-events-none absolute inset-0">
-        {Array.from({ length: 34 }).map((_, index) => (
-          <span
-            key={index}
-            className="absolute rounded-full shadow-[0_0_18px_rgba(251,191,36,0.85)]"
-            style={{
-              width: `${5 + (index % 3) * 2}px`,
-              height: `${5 + (index % 4)}px`,
-              borderRadius: index % 4 === 0 ? "2px" : "999px",
-              backgroundColor: ["#fbbf24", "#34d399", "#38bdf8", "#f472b6"][index % 4],
-              left: `${(index * 37) % 100}%`,
-              bottom: index < 14 ? `${8 + (index * 7) % 78}%` : `${-8 - (index % 5) * 7}%`,
-              opacity: index < 14 ? 0.9 : undefined,
-              animation: `crm-sparkle-float ${3.6 + (index % 6) * 0.35}s linear ${index < 14 ? -index * 0.22 : index * 0.08}s infinite`,
-              ["--spark-x" as any]: `${index % 2 === 0 ? "" : "-"}${18 + (index % 7) * 9}px`,
-            }}
-          />
-        ))}
-      </div>
       <div className="absolute inset-0 flex items-center justify-center p-4">
         <div
-          className="relative w-full max-w-[520px] overflow-hidden rounded-md border border-white/50 bg-white shadow-[0_34px_120px_rgba(0,0,0,0.45)]"
-          role="dialog"
-          aria-modal="true"
-          style={{ animation: "crm-pop-in 260ms ease-out" }}
-          onClick={(e) => e.stopPropagation()}
+          style={{ animation: "crm-pop-in 0.45s cubic-bezier(0.16, 1, 0.3, 1)" }}
+          className="relative w-full max-w-md overflow-hidden rounded-md border border-emerald-400/30 bg-white dark:bg-slate-900 p-6 text-center shadow-2xl"
         >
-          <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-amber-400 via-emerald-400 to-sky-400" />
-          <div className="pointer-events-none absolute -left-16 top-0 h-full w-24 bg-white/60 blur-sm" style={{ animation: "crm-shine 2.8s ease-in-out infinite" }} />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 shadow-md">
+            <CheckCircle2 size={32} />
+          </div>
+
+          <h3 className="mt-4 text-xl font-extrabold text-slate-900 dark:text-white">
+            🎉 Deal Converted!
+          </h3>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Congratulations {name}! Both payments for <strong className="text-slate-900 dark:text-white">{context}</strong> have been marked as received.
+          </p>
+
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full border border-white/70 bg-white/80 text-slate-500 shadow-sm transition hover:bg-white hover:text-slate-900"
-            aria-label="Close congratulations modal"
+            className="mt-6 w-full rounded-md bg-[#111827] dark:bg-purple-600 py-2.5 text-xs font-bold text-white hover:bg-black transition shadow-md"
           >
-            <X size={16} />
+            Continue Working
           </button>
-          <div className="relative overflow-hidden bg-[linear-gradient(135deg,#ecfdf5_0%,#ffffff_48%,#fffbeb_100%)] px-7 pb-7 pt-10 text-center">
-            <div className="absolute -left-16 -top-16 h-36 w-36 rounded-full bg-emerald-200/45 blur-2xl" />
-            <div className="absolute -right-12 top-24 h-32 w-32 rounded-full bg-amber-200/45 blur-2xl" />
-            <div className="absolute left-8 top-8 text-2xl font-black text-amber-400">+</div>
-            <div className="absolute right-12 top-16 text-xl font-black text-emerald-400">+</div>
-            <div className="absolute bottom-10 left-12 text-lg font-black text-sky-400">+</div>
-            <div className="absolute bottom-16 right-9 h-2 w-8 rotate-12 rounded-full bg-pink-300/80" />
-            <div className="relative mx-auto grid h-24 w-24 place-items-center">
-              <div
-                className="absolute inset-0 rounded-full bg-emerald-300"
-                style={{ animation: "crm-pulse-ring 1.8s ease-in-out infinite" }}
-              />
-              <div className="absolute inset-2 rounded-full border border-emerald-200 bg-white" />
-              <div
-                className="relative grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-emerald-500 via-teal-600 to-teal-800 text-white shadow-[0_18px_42px_rgba(16,185,129,0.48)] ring-8 ring-white"
-                style={{ animation: "crm-badge-bob 2.4s ease-in-out infinite" }}
-              >
-                <CheckCircle2 size={42} />
-              </div>
-            </div>
-            <div className="mx-auto mt-6 inline-flex rounded-full border border-emerald-200 bg-white/90 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-emerald-700 shadow-[0_8px_22px_rgba(16,185,129,0.12)]">
-              Quotation Converted
-            </div>
-            <h3 className="mt-4 text-[28px] font-black leading-tight text-slate-950 sm:text-4xl">
-              Congratulations, you did it!
-            </h3>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-slate-600">
-              {name ? `${name}, ` : ""}you converted {context || "this quotation"}.
-              This one is a win. Keep the momentum going.
-            </p>
-        
-          </div>
-          <div className="border-t border-slate-100 bg-gradient-to-b from-white to-slate-50 px-7 py-5">
-            <button
-              type="button"
-              onClick={onClose}
-              className="h-12 w-full rounded-md bg-gradient-to-r from-emerald-600 via-teal-600 to-teal-800 px-4 text-sm font-extrabold text-white shadow-[0_14px_28px_rgba(15,118,110,0.26)] transition hover:translate-y-[-1px] hover:from-emerald-700 hover:to-teal-900"
-            >
-              Celebrate
-            </button>
-          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function printQuotation(row: QuotationRow) {
-  const amount = Number(row.base_amount || 0);
-  const gstAmount = Number(row.gst_amount ?? amount * (Number(row.gst_rate || 0) / 100));
-  const totalAmount = Number(row.total_amount ?? amount + gstAmount);
-  const advanceAmount = Number(row.advance_amount ?? 0);
-  const balanceAmount = Number(row.remaining_amount ?? totalAmount - advanceAmount);
-  openQuotationPrintWindow({
-    id: row.id,
-    client_name: row.client_name,
-    client_mobile: row.client_mobile,
-    service_name: row.service?.name || row.service_name || slugLabel(String(row.service_type || "")),
-    created_at: row.created_at,
-    service_desc: row.service_desc || "",
-    base_amount: amount,
-    gst_rate: Number(row.gst_rate || 0),
-    gst_amount: gstAmount,
-    total_amount: totalAmount,
-    advance_amount: advanceAmount,
-    remaining_amount: balanceAmount,
-    duration: row.duration || "",
-  });
-}
-
 export default function Quotations() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [rows, setRows] = useState<QuotationRow[]>([]);
+  const [serviceOptions, setServiceOptions] = useState<ServiceOption[]>([]);
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [serviceFilter, setServiceFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [pageCount, setPageCount] = useState(1);
-  const [serviceOptions, setServiceOptions] = useState<ServiceOption[]>([]);
-  const [pendingSecondPaymentDates, setPendingSecondPaymentDates] = useState<Record<number, string>>({});
-  const [savingFirstPaymentId, setSavingFirstPaymentId] = useState<number | null>(null);
   const [savingSecondPaymentId, setSavingSecondPaymentId] = useState<number | null>(null);
+  const [savingFirstPaymentId, setSavingFirstPaymentId] = useState<number | null>(null);
+  const [pendingSecondPaymentDates, setPendingSecondPaymentDates] = useState<Record<number, string>>({});
   const [congratsOpen, setCongratsOpen] = useState(false);
-  const [congratsContext, setCongratsContext] = useState("");
+  const [congratsContext, setCongratsContext] = useState<string | null>(null);
 
   const refresh = async () => {
     setLoading(true);
     try {
-      const res = await api.listQuotations({
+      const response = await api.listQuotations({
         page,
         limit: PAGE_SIZE,
-        search,
-        service_type: serviceFilter,
-        status: statusFilter,
-        start_date: startDate,
-        end_date: endDate,
+        search: search.trim() || undefined,
+        service_type: serviceFilter || undefined,
+        status: statusFilter || undefined,
+        from: startDate || undefined,
+        to: endDate || undefined,
       });
 
-      setRows(Array.isArray(res.data) ? res.data : []);
-      setTotal(Number(res.pagination?.total || 0));
-      setPageCount(Number(res.pagination?.pages || 1));
+      const nextRows = Array.isArray(response?.data) ? response.data : [];
+      setRows(nextRows);
+      setTotal(Number(response?.pagination?.total || nextRows.length));
+      setPageCount(Number(response?.pagination?.pages || Math.max(1, Math.ceil(nextRows.length / PAGE_SIZE))));
     } catch (error: any) {
       toast.error(error?.message || "Failed to load quotations");
       setRows([]);
@@ -282,21 +197,21 @@ export default function Quotations() {
 
   useEffect(() => {
     void refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search, serviceFilter, statusFilter, startDate, endDate]);
 
   useEffect(() => {
     const loadServices = async () => {
       try {
-        const res = await api.listQuotationServices({ page: 1, limit: 200 });
-        const next = Array.isArray(res)
-          ? res.map((item: any) => ({
-              id: Number(item.id),
-              name: String(item.name || ""),
-            }))
-          : [];
-        setServiceOptions(next);
-      } catch {
-        setServiceOptions([]);
+        const response = await api.listQuotationServices({ page: 1, limit: 100 });
+        const list = Array.isArray(response)
+          ? response
+          : Array.isArray((response as any)?.data)
+            ? (response as any).data
+            : [];
+        setServiceOptions(list);
+      } catch (error) {
+        console.error("Failed to load quotation services", error);
       }
     };
 
@@ -370,6 +285,34 @@ export default function Quotations() {
     }
   };
 
+  const printQuotation = (row: QuotationRow) => {
+    const amount = Number(row.base_amount || 0);
+    const gstAmount = Number(row.gst_amount ?? amount * (Number(row.gst_rate || 0) / 100));
+    const totalAmount = Number(row.total_amount ?? amount + gstAmount);
+    const advanceAmount = Number(row.advance_amount ?? 0);
+    const balanceAmount = Number(row.remaining_amount ?? totalAmount - advanceAmount);
+
+    const opened = openQuotationPrintWindow({
+      id: row.id,
+      client_name: row.client_name,
+      client_mobile: row.client_mobile,
+      service_name: row.service?.name || row.service_name || slugLabel(String(row.service_type || "")),
+      created_at: row.created_at,
+      service_desc: row.service_desc || "<p></p>",
+      base_amount: amount,
+      gst_rate: row.gst_rate,
+      gst_amount: gstAmount,
+      total_amount: totalAmount,
+      advance_amount: advanceAmount,
+      remaining_amount: balanceAmount,
+      duration: row.duration || "",
+    });
+
+    if (!opened) {
+      toast.error("Allow popups to print quotation");
+    }
+  };
+
   const resetFilters = () => {
     setSearch("");
     setServiceFilter("");
@@ -380,103 +323,141 @@ export default function Quotations() {
   };
 
   return (
-    <div className="w-full">
+    <div className="space-y-6 animate-fade-in">
       <PageHeader
         title="Quotations"
-        subtitle="Quotation records from quotations table"
+        subtitle="Manage and convert customer quotations, track partial payments, and print invoices."
         total={total}
         search={search}
         onSearch={setSearch}
         icon={<FileText size={18} />}
         rightActions={
-          <button
-            type="button"
-            onClick={refresh}
-            className="inline-flex items-center gap-2 rounded-md border border-[#233a47] bg-[#233a47] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#1c303b]"
-          >
-            <RefreshCcw size={16} />
-            Refresh
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/create-quotation"
+              className="inline-flex items-center gap-1.5 rounded-md bg-[#111827] dark:bg-purple-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-black dark:hover:bg-purple-700 transition shadow-2xs"
+            >
+              <Plus size={14} />
+              New Quotation
+            </Link>
+            <button
+              type="button"
+              onClick={refresh}
+              className="inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-2xs"
+            >
+              <RefreshCcw size={14} className={loading ? "animate-spin" : ""} />
+              Refresh
+            </button>
+          </div>
         }
       />
 
-      <div className="mb-4 rounded-md border border-slate-200 bg-white p-4">
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="h-11 rounded-md border border-slate-200 px-3 text-sm outline-none focus:ring-2 focus:ring-slate-300"
-          />
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="h-11 rounded-md border border-slate-200 px-3 text-sm outline-none focus:ring-2 focus:ring-slate-300"
-          />
-          <select
-            value={serviceFilter}
-            onChange={(e) => setServiceFilter(e.target.value)}
-            className="h-11 rounded-md border border-slate-200 px-3 text-sm outline-none focus:ring-2 focus:ring-slate-300"
-          >
-              <option value="">All Services</option>
+      {/* Filter Card */}
+      <div className="rounded-md border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-colors">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5 items-end">
+          <div>
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1 block">
+              From Date
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="h-10 w-full rounded-md border border-slate-200/80 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 px-3 text-xs font-semibold text-slate-900 dark:text-white outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1 block">
+              To Date
+            </label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="h-10 w-full rounded-md border border-slate-200/80 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 px-3 text-xs font-semibold text-slate-900 dark:text-white outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1 block">
+              Service
+            </label>
+            <select
+              value={serviceFilter}
+              onChange={(e) => setServiceFilter(e.target.value)}
+              className="h-10 w-full rounded-md border border-slate-200/80 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 px-3 text-xs font-semibold text-slate-900 dark:text-white outline-none focus:border-blue-500"
+            >
+              <option value="" className="dark:bg-slate-900">All Services</option>
               {serviceOptions.map((item) => (
-                <option key={item.id} value={String(item.id)}>
+                <option key={item.id} value={String(item.id)} className="dark:bg-slate-900">
                   {item.name}
                 </option>
               ))}
-          </select>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-11 rounded-md border border-slate-200 px-3 text-sm outline-none focus:ring-2 focus:ring-slate-300"
-          >
-            <option value="">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="partial">Partial</option>
-            <option value="converted">Converted</option>
-          </select>
-          <button
-            type="button"
-            onClick={resetFilters}
-            className="h-11 rounded-md border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-          >
-            Reset
-          </button>
+            </select>
+          </div>
+
+          <div>
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1 block">
+              Status
+            </label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="h-10 w-full rounded-md border border-slate-200/80 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 px-3 text-xs font-semibold text-slate-900 dark:text-white outline-none focus:border-blue-500"
+            >
+              <option value="" className="dark:bg-slate-900">All Status</option>
+              <option value="pending" className="dark:bg-slate-900">Pending</option>
+              <option value="partial" className="dark:bg-slate-900">Partial</option>
+              <option value="converted" className="dark:bg-slate-900">Converted</option>
+            </select>
+          </div>
+
+          <div>
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="h-10 w-full flex items-center justify-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 text-xs font-bold transition shadow-2xs"
+            >
+              <X className="h-3.5 w-3.5" />
+              Reset Filters
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm">
+      {/* Table Card */}
+      <div className="overflow-hidden rounded-md border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs transition-colors">
         <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="bg-slate-800">
-              <tr className="text-left text-sm font-semibold text-white">
-                <th className="border-r border-slate-600 px-4 py-4">#ID</th>
-                <th className="border-r border-slate-600 px-4 py-4">Client</th>
-                <th className="border-r border-slate-600 px-4 py-4">Mobile</th>
-                <th className="border-r border-slate-600 px-4 py-4">Service</th>
-                <th className="border-r border-slate-600 px-4 py-4">Total (₹)</th>
-                <th className="border-r border-slate-600 px-4 py-4">Advance (₹)</th>
-                <th className="border-r border-slate-600 px-4 py-4">Remaining (₹)</th>
-                <th className="border-r border-slate-600 px-4 py-4">Duration</th>
-                <th className="border-r border-slate-600 px-4 py-4">Date</th>
-                <th className="border-r border-slate-600 px-4 py-4">1st Payment</th>
-                <th className="border-r border-slate-600 px-4 py-4">2nd Payment</th>
-                <th className="border-r border-slate-600 px-4 py-4">Status</th>
-                <th className="px-4 py-4">Action</th>
+          <table className="min-w-full text-left text-xs border-collapse">
+            <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/70 dark:border-slate-800 text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400">
+              <tr>
+                <th className="px-4 py-3.5">#ID</th>
+                <th className="px-4 py-3.5">Client</th>
+                <th className="px-4 py-3.5">Mobile</th>
+                <th className="px-4 py-3.5">Service</th>
+                <th className="px-4 py-3.5">Total (₹)</th>
+                <th className="px-4 py-3.5">Advance (₹)</th>
+                <th className="px-4 py-3.5">Remaining (₹)</th>
+                <th className="px-4 py-3.5">Duration</th>
+                <th className="px-4 py-3.5">Date</th>
+                <th className="px-4 py-3.5">1st Payment</th>
+                <th className="px-4 py-3.5">2nd Payment</th>
+                <th className="px-4 py-3.5">Status</th>
+                <th className="px-4 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/70">
               {loading ? (
                 <tr>
-                  <td colSpan={13} className="px-4 py-10 text-center text-sm text-slate-500">
+                  <td colSpan={13} className="px-4 py-12 text-center text-xs font-semibold text-slate-500">
                     Loading quotations...
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={13} className="px-4 py-10 text-center text-sm text-slate-500">
-                    No quotations found.
+                  <td colSpan={13} className="px-4 py-12 text-center text-xs font-medium text-slate-400">
+                    No quotations found. Click &apos;New Quotation&apos; to create one.
                   </td>
                 </tr>
               ) : (
@@ -494,42 +475,42 @@ export default function Quotations() {
                   const showSecondPaymentEditor = !row.second_payment_date || allowSecondEdit;
                   const statusClasses =
                     status === "converted"
-                      ? "bg-emerald-100 text-emerald-700"
+                      ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
                       : status === "partial"
-                        ? "bg-sky-100 text-sky-700"
-                        : "bg-amber-100 text-amber-700";
+                        ? "bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-400 border border-sky-200 dark:border-sky-800"
+                        : "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-800";
 
                   return (
-                    <tr key={row.id} className="border-t border-slate-200 bg-white align-top">
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">{row.id}</td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm font-medium text-slate-900">{row.client_name || "-"}</td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">{row.client_mobile || "-"}</td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">
+                    <tr key={row.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition">
+                      <td className="px-4 py-3 font-bold text-slate-500 dark:text-slate-400">#{row.id}</td>
+                      <td className="px-4 py-3 font-bold text-slate-900 dark:text-white max-w-[150px] truncate">{row.client_name || "-"}</td>
+                      <td className="px-4 py-3 font-medium text-slate-600 dark:text-slate-300">{row.client_mobile || "-"}</td>
+                      <td className="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">
                         {row.service?.name || row.service_name || slugLabel(String(row.service_type || ""))}
                       </td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">{toCurrency(totalAmount)}</td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">{toCurrency(advanceAmount)}</td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">{toCurrency(balanceAmount)}</td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">{row.duration || "-"}</td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">{formatDate(row.created_at)}</td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">
+                      <td className="px-4 py-3 font-bold text-slate-900 dark:text-white">{toCurrency(totalAmount)}</td>
+                      <td className="px-4 py-3 font-semibold text-emerald-600 dark:text-emerald-400">{toCurrency(advanceAmount)}</td>
+                      <td className="px-4 py-3 font-semibold text-rose-600 dark:text-rose-400">{toCurrency(balanceAmount)}</td>
+                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400 whitespace-nowrap">{row.duration || "-"}</td>
+                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400 whitespace-nowrap">{formatDate(row.created_at)}</td>
+                      <td className="px-4 py-3 whitespace-nowrap">
                         {firstPayment ? (
-                          firstPayment
+                          <span className="font-semibold text-slate-700 dark:text-slate-300">{firstPayment}</span>
                         ) : (
                           <button
                             type="button"
                             onClick={() => void receiveFirstPayment(row)}
                             disabled={savingFirstPaymentId === row.id}
-                            className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700"
+                            className="inline-flex items-center gap-1 rounded-md bg-emerald-600 hover:bg-emerald-700 px-2.5 py-1 text-[11px] font-bold text-white transition shadow-2xs"
                           >
-                            <CheckCircle2 size={14} />
+                            <CheckCircle2 size={12} />
                             {savingFirstPaymentId === row.id ? "Updating..." : "Receive"}
                           </button>
                         )}
                       </td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">
+                      <td className="px-4 py-3">
                         {showSecondPaymentEditor ? (
-                          <div className="min-w-[168px] space-y-2">
+                          <div className="min-w-[150px] space-y-1.5">
                             <input
                               type="date"
                               value={pendingSecondPaymentDates[row.id] || ""}
@@ -539,44 +520,44 @@ export default function Quotations() {
                                   [row.id]: e.target.value,
                                 }))
                               }
-                              className="h-9 w-full rounded-md border border-slate-300 px-2 text-sm outline-none focus:ring-2 focus:ring-amber-300"
+                              className="h-8 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2 text-xs font-medium text-slate-900 dark:text-white outline-none"
                             />
                             <button
                               type="button"
                               onClick={() => void saveSecondPaymentDate(row)}
                               disabled={savingSecondPaymentId === row.id}
-                              className="inline-flex w-full items-center justify-center gap-1 rounded-md bg-gradient-to-r from-pink-600 to-amber-500 px-3 py-2 text-xs font-semibold text-white transition hover:opacity-95"
+                              className="inline-flex w-full items-center justify-center gap-1 rounded-md bg-[#111827] dark:bg-purple-600 hover:bg-black dark:hover:bg-purple-700 px-2.5 py-1 text-[11px] font-bold text-white transition shadow-2xs"
                             >
-                              <Save size={14} />
+                              <Save size={12} />
                               {savingSecondPaymentId === row.id ? "Saving..." : row.second_payment_date ? "Update" : "Save"}
                             </button>
                           </div>
                         ) : (
-                          secondPayment
+                          <span className="font-semibold text-slate-700 dark:text-slate-300">{secondPayment}</span>
                         )}
                       </td>
-                      <td className="border-r border-slate-200 px-4 py-4 text-sm text-slate-700">
-                        <span className={`inline-flex rounded-md px-3 py-1.5 text-xs font-semibold ${statusClasses}`}>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className={`inline-flex rounded-md px-2.5 py-0.5 text-[10px] font-bold ${statusClasses}`}>
                           {status.charAt(0).toUpperCase() + status.slice(1)}
                         </span>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="flex items-center gap-2">
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             type="button"
                             onClick={() => printQuotation(row)}
-                            className="rounded-md border border-rose-300 p-2 text-rose-500 transition hover:bg-rose-50"
+                            className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-2xs"
                             title="Print quotation"
                           >
-                            <Printer size={16} />
+                            <Printer size={14} />
                           </button>
                           <button
                             type="button"
                             onClick={() => navigate(`/create-quotation?id=${row.id}`)}
-                            className="rounded-md border border-slate-300 p-2 text-slate-500 transition hover:bg-slate-50"
+                            className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-2xs"
                             title="Edit quotation"
                           >
-                            <Pencil size={16} />
+                            <Pencil size={14} />
                           </button>
                         </div>
                       </td>
@@ -588,14 +569,14 @@ export default function Quotations() {
           </table>
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-          <div className="text-sm text-slate-500">Page {page} of {pageCount}</div>
+        <div className="flex items-center justify-between border-t border-slate-200/70 dark:border-slate-800 px-5 py-3.5">
+          <div className="text-xs font-medium text-slate-500 dark:text-slate-400">Page <span className="font-bold text-slate-900 dark:text-white">{page}</span> of <span className="font-bold text-slate-900 dark:text-white">{pageCount}</span></div>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700 disabled:opacity-50"
+              className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition disabled:opacity-40 disabled:cursor-not-allowed shadow-2xs"
             >
               Prev
             </button>
@@ -603,22 +584,12 @@ export default function Quotations() {
               type="button"
               onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
               disabled={page >= pageCount}
-              className="rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700 disabled:opacity-50"
+              className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition disabled:opacity-40 disabled:cursor-not-allowed shadow-2xs"
             >
               Next
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="mt-4">
-        <Link
-          to="/create-quotation"
-          className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
-        >
-          <FileText size={16} />
-          Create Quotation
-        </Link>
       </div>
 
       <ConversionCongratsModal

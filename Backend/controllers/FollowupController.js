@@ -389,6 +389,17 @@ exports.getAllFollowups = async (req, res) => {
     if (status_id) whereClause.status_id = status_id;
     if (changed_by) whereClause.changed_by = changed_by;
 
+    const isAgent =
+      req.user?.type === "agent" ||
+      (req.user?.role_id !== undefined && Number(req.user.role_id) !== 1);
+
+    if (isAgent) {
+      whereClause[Op.or] = [
+        { changed_by: req.user.id },
+        { "$lead.assign_to$": req.user.id },
+      ];
+    }
+
     if (search) {
       whereClause[Op.or] = [
         { remark: { [Op.like]: `%${search}%` } },
