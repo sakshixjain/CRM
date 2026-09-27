@@ -1,0 +1,14 @@
+# Testing: run activity_event_batches cleanup every minute.
+# Update BACKEND_DIR if your backend is deployed somewhere else.
+#
+# Install:
+#   crontab -e
+#   paste the active line below
+#
+# Check logs:
+#   tail -f /home/owss-crm/logs/activityEventBatchCleanup.log
+
+BACKEND_DIR=/home/owss-crm/Backend
+LOG_FILE=/home/owss-crm/logs/activityEventBatchCleanup.log
+
+* * * * * cd $BACKEND_DIR && /usr/bin/flock -n /tmp/activity-event-batch-cleanup.lock /usr/bin/node cron/activityEventBatchCleanupCron.js >> $LOG_FILE 2>&1
