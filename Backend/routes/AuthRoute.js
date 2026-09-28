@@ -2,17 +2,7 @@ const express = require("express");
 const AuthController = require("../controllers/AuthController.js");
 const { protect } = require("../middleware/authMiddleware.js");
 const router = express.Router();
-const {
-  sendWelcomeEmail,
-  sendPasswordResetEmail,
-  sendVerificationEmail,
-  sendEmail} = require('../controllers/EmailController');
-
-// Define routes
-router.post('/send-welcome', sendWelcomeEmail);
-router.post('/send-password-reset', sendPasswordResetEmail);
-router.post('/send-verification', sendVerificationEmail);
-router.post('/send', sendEmail);
+// Auth routes
 router.post("/signup", AuthController.signup);
 router.post("/login", AuthController.login);
 // router.post("/verify-otp",AuthController.verifyOtp);

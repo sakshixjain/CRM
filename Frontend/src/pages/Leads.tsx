@@ -2565,6 +2565,28 @@ export default function Leads() {
   useEffect(() => {
     loadAll(page);
   }, [page, q, assignStatusTab, filterSource, callStatus, filterStatus, filterAgent, filterChangedBy, fromDate, toDate]);
+  useEffect(() => {
+    const viewParam = searchParams.get("view") || searchParams.get("assign_status");
+    if (viewParam === "assigned" || viewParam === "unassigned" || viewParam === "my_leads" || viewParam === "all") {
+      setAssignStatusTab(viewParam as any);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (tab: "all" | "assigned" | "unassigned" | "my_leads") => {
+    setAssignStatusTab(tab);
+    setPage(1);
+    const next = new URLSearchParams(searchParams);
+    if (tab === "all") {
+      next.delete("view");
+      next.delete("assign_status");
+    } else {
+      next.set("view", tab);
+      next.delete("assign_status");
+    }
+    setSearchParams(next, { replace: true });
+  };
+
+
 
   useEffect(() => {
     if (!searchParams.has("search")) return;
@@ -3037,7 +3059,7 @@ export default function Leads() {
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <button
           type="button"
-          onClick={() => setAssignStatusTab("all")}
+          onClick={() => handleTabChange("all")}
           className={cn(
             "px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition shadow-xs",
             assignStatusTab === "all"
@@ -3060,7 +3082,7 @@ export default function Leads() {
 
         <button
           type="button"
-          onClick={() => setAssignStatusTab("assigned")}
+          onClick={() => handleTabChange("assigned")}
           className={cn(
             "px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition shadow-xs",
             assignStatusTab === "assigned"
@@ -3084,7 +3106,7 @@ export default function Leads() {
 
         <button
           type="button"
-          onClick={() => setAssignStatusTab("unassigned")}
+          onClick={() => handleTabChange("unassigned")}
           className={cn(
             "px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition shadow-xs",
             assignStatusTab === "unassigned"
@@ -3108,7 +3130,7 @@ export default function Leads() {
 
         <button
           type="button"
-          onClick={() => setAssignStatusTab("my_leads")}
+          onClick={() => handleTabChange("my_leads")}
           className={cn(
             "px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition shadow-xs",
             assignStatusTab === "my_leads"

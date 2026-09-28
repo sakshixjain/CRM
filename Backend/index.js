@@ -184,6 +184,16 @@ async function ensureEmailTables() {
   }
 }
 
+async function ensureTicketTable() {
+  try {
+    const Ticket = require("./models/Ticket");
+    await Ticket.sync();
+    console.log('Tickets table synced OK');
+  } catch (error) {
+    console.error("Unable to sync tickets table:", error.message);
+  }
+}
+
 app.use(
   cors({
     origin: ['http://localhost:5173', 'https://owss.in'],
@@ -194,9 +204,11 @@ app.use(express.json());
 
 // Routes
 const EmailRoutes = require("./routes/EmailRoute");
+const TicketRoutes = require("./routes/TicketRoute");
 app.use("/", AuthRoutes);
 app.use("/api/", LeadRoute);
 app.use("/api/email", EmailRoutes);
+app.use("/api/tickets", TicketRoutes);
 
 // Health check
 app.get("/health", (req, res) =>
@@ -218,6 +230,7 @@ async function start() {
     await ensureWebhookTable();
     await ensureAgentTableColumns();
     await ensureEmailTables();
+    await ensureTicketTable();
 
     if (process.env.NODE_ENV !== "production") {
       console.log("Tables synced (development mode)");

@@ -33,6 +33,7 @@ import Signup from "./pages/Signup.tsx";
 import CompanyDetails from "./pages/CompanyDetails.tsx";
 import Activity from "./pages/Activity.tsx";
 import FieldWork from "./pages/FieldWork.tsx";
+import Tickets from "./pages/Tickets.tsx";
 
 export default function App() {
   return (
@@ -63,6 +64,7 @@ export default function App() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/settings" element={<Settings />} />
 
+        <Route path="/tickets" element={<Tickets />} />
         <Route path="/create-lead" element={<CreateLead />} />
         <Route path="/create-quotation" element={<CreateQuotation />} />
         <Route path="/quotation-dashboard" element={<QuotationDashboard />} />

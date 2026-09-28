@@ -793,6 +793,69 @@ listAgentById(id: number | string) {
     },
   },
 
+  // Ticket Management API
+  tickets: {
+    list(params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      status?: string;
+      priority?: string;
+      category?: string;
+      assigned_to?: number | string;
+      lead_id?: number | string;
+      fromDate?: string;
+      toDate?: string;
+      sortBy?: string;
+      sortOrder?: string;
+    }) {
+      return request<{
+        success: boolean;
+        data: any[];
+        pagination: { total: number; page: number; limit: number; totalPages: number };
+      }>(`/api/tickets${buildQS(params)}`, "GET");
+    },
+    getById(id: number | string) {
+      return request<{ success: boolean; data: any }>(`/api/tickets/${id}`, "GET");
+    },
+    create(payload: {
+      title: string;
+      description?: string;
+      category?: string;
+      priority?: string;
+      status?: string;
+      lead_id?: number | null;
+      customer_name?: string;
+      customer_email?: string;
+      customer_phone?: string;
+      assigned_to?: number | null;
+      due_date?: string | null;
+    }) {
+      return request<{ success: boolean; data: any; message?: string }>("/api/tickets", "POST", payload);
+    },
+    update(id: number | string, payload: any) {
+      return request<{ success: boolean; data: any; message?: string }>(`/api/tickets/${id}`, "PUT", payload);
+    },
+    delete(id: number | string) {
+      return request<{ success: boolean; message?: string }>(`/api/tickets/${id}`, "DELETE");
+    },
+    stats() {
+      return request<{
+        success: boolean;
+        data: {
+          total: number;
+          open: number;
+          inProgress: number;
+          pending: number;
+          resolved: number;
+          closed: number;
+          urgent: number;
+          high: number;
+        };
+      }>("/api/tickets/stats", "GET");
+    },
+  },
+
   // Generic CRUD
   list<T>(resource: string) {
     return request<T[]>(`/api/${resource}`, "GET");
@@ -843,5 +906,6 @@ listAgentById(id: number | string) {
     return data;
   },
 };
+
 
 

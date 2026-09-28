@@ -151,34 +151,34 @@ function fmtDate(d?: string) {
 
 function statusRowBg(statusRaw?: string) {
   const status = (statusRaw || "").toLowerCase();
-  if (status === "assign") return "bg-yellow-50/90";
-  if (status === "hold") return "bg-orange-50/90";
-  if (status === "done") return "bg-emerald-50/90";
-  if (status === "pending") return "bg-amber-50/90";
-  if (status === "unresponsive") return "bg-red-50/90";
-  if (status === "closed") return "bg-rose-50/90";
+  if (status === "assign") return "bg-yellow-50/90 dark:bg-amber-950/25";
+  if (status === "hold") return "bg-orange-50/90 dark:bg-orange-950/25";
+  if (status === "done") return "bg-emerald-50/90 dark:bg-emerald-950/25";
+  if (status === "pending") return "bg-amber-50/90 dark:bg-yellow-950/25";
+  if (status === "unresponsive") return "bg-red-50/90 dark:bg-red-950/25";
+  if (status === "closed") return "bg-rose-50/90 dark:bg-rose-950/25";
   return "";
 }
 
 function statusPill(statusRaw?: string) {
   const status = (statusRaw || "").toLowerCase();
   const base =
-    "inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold border";
+    "inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold border transition-colors";
 
   if (status === "assign")
-    return cn(base, "bg-yellow-50 text-yellow-700 border-yellow-200");
+    return cn(base, "bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800/60");
   if (status === "hold")
-    return cn(base, "bg-orange-50 text-orange-800 border-orange-200");
+    return cn(base, "bg-orange-50 text-orange-800 border-orange-200 dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-800/60");
   if (status === "done")
-    return cn(base, "bg-emerald-50 text-emerald-700 border-emerald-200");
+    return cn(base, "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800/60");
   if (status === "pending")
-    return cn(base, "bg-amber-50 text-amber-800 border-amber-200");
+    return cn(base, "bg-amber-50 text-amber-800 border-amber-200 dark:bg-yellow-950/50 dark:text-yellow-300 dark:border-yellow-800/60");
   if (status === "unresponsive")
-    return cn(base, "bg-red-50 text-red-700 border-red-200");
+    return cn(base, "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800/60");
   if (status === "closed")
-    return cn(base, "bg-rose-50 text-rose-700 border-rose-200");
+    return cn(base, "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800/60");
 
-  return cn(base, "bg-slate-50 text-slate-700 border-slate-200");
+  return cn(base, "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700");
 }
 
 const DOWNLOAD_DUMMY_URL = "/api/payments/dummy-sheet";
@@ -777,18 +777,18 @@ export default function Payment() {
                 <button
                   type="button"
                   onClick={downloadDummy}
-                  className="inline-flex items-center gap-2 px-2 py-2 rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition shadow-sm text-slate-800 font-semibold"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-sm text-slate-800 dark:text-slate-200 font-semibold text-xs"
                 >
-                  <Download size={16} />
+                  <Download size={15} />
                   Download Sample
                 </button>
 
                 <button
                   type="button"
                   onClick={openImport}
-                  className="inline-flex items-center gap-2 px-2 py-2 rounded-md border border-white/10 bg-[#0b2533]/90 text-white hover:bg-[#123b52] transition shadow-sm font-semibold"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-white/10 dark:border-slate-700 bg-[#0b2533]/90 dark:bg-slate-800 text-white hover:bg-[#123b52] dark:hover:bg-slate-700 transition shadow-sm font-semibold text-xs"
                 >
-                  <Upload size={16} className="text-white/80" />
+                  <Upload size={15} className="text-white/80" />
                   Import Leads
                 </button>
               </>
@@ -797,13 +797,13 @@ export default function Payment() {
               type="button"
               onClick={() => setFilterOpen((prev) => !prev)}
               className={cn(
-                "inline-flex items-center gap-2 px-4 py-2.5 rounded-md border transition shadow-sm text-sm font-semibold",
+                "inline-flex items-center gap-2 px-3.5 py-2.5 rounded-md border transition shadow-sm text-xs font-semibold",
                 filterOpen
-                  ? "border-slate-900 bg-slate-900 text-white"
-                  : "border-slate-200 bg-white hover:bg-slate-50 text-slate-800"
+                  ? "border-slate-900 bg-slate-900 text-white dark:border-blue-500 dark:bg-blue-600"
+                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200"
               )}
             >
-              <Filter size={16} />
+              <Filter size={15} />
               {filterOpen
                 ? "Hide Filter"
                 : `Filter${activeFilterCount ? ` (${activeFilterCount})` : ""}`}
@@ -811,19 +811,19 @@ export default function Payment() {
 
             <button
               onClick={fetchPayments}
-              className="px-4 py-2.5 rounded-md border border-[#233a47] bg-[#233a47] hover:bg-[#1c303b] text-sm font-semibold text-white flex items-center gap-2 shadow-sm"
+              className="px-3.5 py-2.5 rounded-md border border-[#233a47] bg-[#233a47] hover:bg-[#1c303b] dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-white flex items-center gap-2 shadow-sm transition"
               type="button"
             >
-              <RefreshCcw size={16} />
+              <RefreshCcw size={15} className={loading ? "animate-spin" : ""} />
               Refresh
             </button>
 
             <button
               onClick={openCreate}
-              className="px-4 py-2.5 rounded-md bg-slate-900 text-white hover:bg-slate-800 text-sm font-semibold flex items-center gap-2 shadow-sm"
+              className="px-4 py-2.5 rounded-md bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-xs font-semibold text-white flex items-center gap-2 shadow-sm transition"
               type="button"
             >
-              <Plus size={16} />
+              <Plus size={15} />
               Add Payment
             </button>
           </>
@@ -831,19 +831,19 @@ export default function Payment() {
       />
 
       {filterOpen && (
-        <div className="mb-4 rounded-md border border-slate-200 bg-white shadow-sm p-4">
-          <div className="flex items-center justify-between ">
-            <h3 className="text-sm font-bold text-slate-900">Payment Filters</h3>
+        <div className="mb-4 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-4 transition-colors">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Payment Filters</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-4 items-end">
             <div>
-              <label className="text-xs font-semibold text-slate-700">Days</label>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Days</label>
               <select
                 name="day_range"
                 value={filters.day_range}
                 onChange={onFilterChange}
-                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               >
                 <option value="">All Days</option>
                 <option value="1">Today</option>
@@ -855,34 +855,34 @@ export default function Payment() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-700">From Date</label>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">From Date</label>
               <input
                 type="date"
                 name="from_date"
                 value={filters.from_date}
                 onChange={onFilterChange}
-                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-700">To Date</label>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">To Date</label>
               <input
                 type="date"
                 name="to_date"
                 value={filters.to_date}
                 onChange={onFilterChange}
-                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-700">Status</label>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Status</label>
               <select
                 name="status"
                 value={filters.status}
                 onChange={onFilterChange}
-                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               >
                 <option value="">All Status</option>
                 <option value="assign">Assign</option>
@@ -895,12 +895,12 @@ export default function Payment() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-700">Agent</label>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Agent</label>
               <select
                 name="caller_id"
                 value={filters.caller_id}
                 onChange={onFilterChange}
-                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               >
                 <option value="">
                   {agentsLoading ? "Loading agents..." : "All Agents"}
@@ -914,26 +914,26 @@ export default function Payment() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-700">Min Amount</label>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Min Amount</label>
               <input
                 type="number"
                 name="min_amount"
                 value={filters.min_amount}
                 onChange={onFilterChange}
                 placeholder="0"
-                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-700">Max Amount</label>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Max Amount</label>
               <input
                 type="number"
                 name="max_amount"
                 value={filters.max_amount}
                 onChange={onFilterChange}
                 placeholder="50000"
-                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               />
             </div>
 
@@ -941,7 +941,7 @@ export default function Payment() {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="w-full px-3 py-3 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold text-slate-700"
+                className="w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 shadow-2xs transition"
               >
                 Reset
               </button>
@@ -960,11 +960,11 @@ export default function Payment() {
         <MiniStat label="Total" value={rows.length} />
       </div>
 
-      <div className="bg-white rounded-md border border-slate-200/70 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-md border border-slate-200/70 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
         <div className="overflow-x-auto">
-          <table className="min-w-[1320px] w-full">
-            <thead className="bg-slate-50 border-b border-slate-200">
-              <tr className="text-left text-xs font-bold text-slate-700">
+          <table className="min-w-[1320px] w-full border-collapse">
+            <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800">
+              <tr className="text-left text-xs font-bold text-slate-700 dark:text-slate-300">
                 <th className="px-5 py-4">S.No</th>
                 <th className="px-5 py-4">Date</th>
                 <th className="px-5 py-4">Agent Name</th>
@@ -982,20 +982,20 @@ export default function Payment() {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {loading ? (
                 <tr>
                   <td className="px-6 py-14 text-center" colSpan={14}>
                     <div className="flex flex-col items-center justify-center">
-                      <Loader2 className="w-8 h-8 text-slate-700 animate-spin mb-3" />
-                      <div className="text-slate-700">Loading payments...</div>
+                      <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-3" />
+                      <div className="text-slate-700 dark:text-slate-300 font-semibold">Loading payments...</div>
                     </div>
                   </td>
                 </tr>
               ) : filteredRows.length === 0 ? (
                 <tr>
                   <td className="px-6 py-14 text-center" colSpan={14}>
-                    <div className="text-slate-600">No payments found.</div>
+                    <div className="text-slate-600 dark:text-slate-400">No payments found.</div>
                   </td>
                 </tr>
               ) : (
@@ -1012,33 +1012,33 @@ export default function Payment() {
                       id={`payment-row-${r.id}`}
                       key={r.id}
                       className={cn(
-                        "transition hover:brightness-[0.98]",
+                        "transition hover:brightness-[0.98] dark:hover:bg-slate-800/40",
                         statusRowBg(status),
                         isHighlighted &&
-                          "animate-pulse bg-amber-200/90 ring-2 ring-inset ring-amber-500"
+                          "animate-pulse bg-amber-200/90 dark:bg-amber-900/40 ring-2 ring-inset ring-amber-500"
                       )}
                     >
-                      <td className="px-5 py-3 text-slate-700 font-semibold">
+                      <td className="px-5 py-3 text-slate-700 dark:text-slate-300 font-semibold text-sm">
                         {(page - 1) * pageSize + idx + 1}
                       </td>
 
-                      <td className="px-5 py-3 text-md text-slate-800">
+                      <td className="px-5 py-3 text-sm text-slate-800 dark:text-slate-300">
                         {fmtDate(r.date)}
                       </td>
 
                       <td className="px-5 py-3">
-                        <div className="text-md font-semibold text-slate-900">
+                        <div className="text-sm font-semibold text-slate-900 dark:text-white">
                           {getCallerName(r)}
                         </div>
                       </td>
 
                       <td className="px-5 py-3">
-                        <div className="text-md font-semibold text-slate-900">
+                        <div className="text-sm font-semibold text-blue-600 dark:text-blue-400">
                           {r.lead_name || "—"}
                         </div>
                       </td>
 
-                      <td  className="px-5 py-3 text-md text-slate-800">
+                      <td className="px-5 py-3 text-sm text-slate-800 dark:text-slate-300">
                         {r.contact_no || "—"}
                       </td>
 
@@ -1049,8 +1049,8 @@ export default function Payment() {
                             disabled={savingFieldWorkId === r.id}
                             onChange={(e) => void updateFieldWork(r, e.target.value)}
                             className={cn(
-                              "h-9 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 pl-3 pr-8 text-sm font-semibold text-slate-800 shadow-sm outline-none transition",
-                              "hover:bg-white focus:border-slate-300 focus:bg-white focus:ring-2 focus:ring-slate-200",
+                              "h-9 w-full appearance-none rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-3 pr-8 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs outline-none transition",
+                              "hover:bg-white dark:hover:bg-slate-750 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800",
                               savingFieldWorkId === r.id && "cursor-not-allowed opacity-60"
                             )}
                             aria-label="Update field work"
@@ -1059,54 +1059,54 @@ export default function Payment() {
                             <option value="No">No</option>
                             <option value="Yes">Yes</option>
                           </select>
-                          <span className="pointer-events-none absolute right-2.5 text-slate-500">
+                          <span className="pointer-events-none absolute right-2.5 text-slate-500 dark:text-slate-400">
                             {savingFieldWorkId === r.id ? (
-                              <Loader2 size={14} className="animate-spin" />
+                              <Loader2 size={13} className="animate-spin" />
                             ) : (
-                              <ChevronDown size={14} />
+                              <ChevronDown size={13} />
                             )}
                           </span>
                         </div>
                       </td>
 
-                      <td className="px-5 py-3 text-md text-slate-800">
+                      <td className="px-5 py-3 text-sm text-slate-800 dark:text-slate-300">
                         {r.case_location || "—"}
                       </td>
 
-                      <td className="px-5 py-3 text-md text-slate-800">
+                      <td className="px-5 py-3 text-sm text-slate-800 dark:text-slate-300">
                         {r.case_type || "—"}
                       </td>
 
-                      <td className="px-5 py-3 text-md text-slate-800">
-                        {r.duration || "â€”"}
+                      <td className="px-5 py-3 text-sm text-slate-800 dark:text-slate-300">
+                        {r.duration || "—"}
                       </td>
 
-                      <td className="px-5 py-3 text-sm text-right font-semibold text-slate-900">
+                      <td className="px-5 py-3 text-sm text-right font-semibold text-slate-900 dark:text-white">
                         ₹{money(total)}
                       </td>
 
-                      <td className="px-5 py-3 text-sm text-right font-semibold text-slate-900">
+                      <td className="px-5 py-3 text-sm text-right font-bold text-emerald-600 dark:text-emerald-400">
                         ₹{money(received)}
                       </td>
 
-                      <td className="px-5 py-3 text-sm text-right font-bold text-slate-900">
+                      <td className="px-5 py-3 text-sm text-right font-bold text-amber-600 dark:text-amber-400">
                         ₹{money(pending)}
                       </td>
 
                       <td className="px-5 py-3">
                         <span className={statusPill(status)}>
                           {status === "done" ? (
-                            <CheckCircle2 size={14} />
+                            <CheckCircle2 size={13} />
                           ) : status === "hold" ? (
-                            <AlertCircle size={14} />
+                            <AlertCircle size={13} />
                           ) : status === "closed" ? (
-                            <CircleX size={14} />
+                            <CircleX size={13} />
                           ) : status === "assign" ? (
-                            <UserCheck size={14} />
+                            <UserCheck size={13} />
                           ) : status === "pending" ? (
-                            <Clock size={14} />
+                            <Clock size={13} />
                           ) : status === "unresponsive" ? (
-                            <WifiOff size={14} />
+                            <WifiOff size={13} />
                           ) : null}
                           {r.status || "—"}
                         </span>
@@ -1116,20 +1116,20 @@ export default function Payment() {
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => openEdit(r)}
-                            className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold text-slate-800 shadow-sm"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs transition"
                             type="button"
                           >
-                            <Pencil size={16} />
+                            <Pencil size={14} />
                             Edit
                           </button>
 
-                      
-                             {isAdmin && (   <button
+                          {isAdmin && (
+                            <button
                               onClick={() => removeRow(r.id)}
-                              className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-red-200 bg-white hover:bg-red-50 text-sm font-semibold text-red-700 shadow-sm"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-red-200 dark:border-red-900/50 bg-white dark:bg-red-950/30 hover:bg-red-50 dark:hover:bg-red-900/40 text-xs font-bold text-red-700 dark:text-red-400 shadow-2xs transition"
                               type="button"
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={14} />
                               Delete
                             </button>
                           )}
@@ -1143,15 +1143,15 @@ export default function Payment() {
           </table>
         </div>
 
-        <div className="px-5 py-4 text-sm text-slate-600 border-t border-slate-200 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+        <div className="px-5 py-4 text-sm text-slate-600 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <span>
               Total rows:{" "}
-              <span className="font-bold text-slate-900">{filteredRows.length}</span>
+              <span className="font-bold text-slate-900 dark:text-white">{filteredRows.length}</span>
             </span>
-            <span className="text-slate-300">•</span>
+            <span className="text-slate-300 dark:text-slate-600">•</span>
             <span>
-              Page: <span className="font-bold text-slate-900">{page}</span> /{" "}
+              Page: <span className="font-bold text-slate-900 dark:text-white">{page}</span> /{" "}
               {totalPages}
             </span>
           </div>
@@ -1160,7 +1160,7 @@ export default function Payment() {
             <select
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
-              className="px-3 py-2 rounded-md border border-slate-200 bg-white text-sm font-semibold text-slate-800"
+              className="px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none"
             >
               <option value={10}>10 / page</option>
               <option value={20}>20 / page</option>
@@ -1173,7 +1173,7 @@ export default function Payment() {
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
               className={cn(
-                "px-3 py-2 rounded-md border border-slate-200 bg-white hover:bg-slate-50 font-semibold text-slate-800",
+                "px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 transition",
                 page <= 1 && "opacity-60 cursor-not-allowed"
               )}
             >
@@ -1185,7 +1185,7 @@ export default function Payment() {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
               className={cn(
-                "px-3 py-2 rounded-md border border-slate-200 bg-white hover:bg-slate-50 font-semibold text-slate-800",
+                "px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 transition",
                 page >= totalPages && "opacity-60 cursor-not-allowed"
               )}
             >
@@ -1199,20 +1199,20 @@ export default function Payment() {
         <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-950/55 backdrop-blur-[2px]" onClick={closeModal} />
 
-          <div className="relative flex max-h-[calc(100vh-32px)] w-[95%] max-w-3xl flex-col overflow-hidden rounded-md border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.38)]">
-            <div className="shrink-0 px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+          <div className="relative flex max-h-[calc(100vh-32px)] w-[95%] max-w-3xl flex-col overflow-hidden rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_28px_90px_rgba(15,23,42,0.38)] transition-colors">
+            <div className="shrink-0 px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex items-center justify-between">
               <div>
-                <div className="text-lg font-bold text-slate-900">
+                <div className="text-lg font-bold text-slate-900 dark:text-white">
                   {mode === "create" ? "Add Payment" : "Edit Payment"}
                 </div>
-                <div className="text-xs text-slate-600">
+                <div className="text-xs text-slate-600 dark:text-slate-400">
                   Lead is manual now (no lead API)
                 </div>
               </div>
 
               <button
                 onClick={closeModal}
-                className="w-10 h-10 rounded-md border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-700"
+                className="w-9 h-9 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300"
                 title="Close"
                 type="button"
               >
@@ -1239,12 +1239,12 @@ export default function Payment() {
                 />
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-700">Agent</label>
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Agent</label>
                   <select
                     name="caller_id"
                     value={form.caller_id}
                     onChange={onChange}
-                    className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                    className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                   >
                     <option value="">
                       {agentsLoading ? "Loading agents..." : "Select agent"}
@@ -1258,7 +1258,7 @@ export default function Payment() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     Contact No
                   </label>
                   <PhoneInput
@@ -1277,16 +1277,13 @@ export default function Payment() {
                     inputStyle={{
                       width: "100%",
                       height: "44px",
-                      borderRadius: "12px",
-                      border: "1px solid #e2e8f0",
+                      borderRadius: "6px",
                       fontSize: "14px",
                       paddingLeft: "52px",
                     }}
                     buttonStyle={{
-                      borderTopLeftRadius: "12px",
-                      borderBottomLeftRadius: "12px",
-                      border: "1px solid #e2e8f0",
-                      background: "#fff",
+                      borderTopLeftRadius: "6px",
+                      borderBottomLeftRadius: "6px",
                     }}
                     containerStyle={{ width: "100%" }}
                     dropdownStyle={{ width: "300px" }}
@@ -1312,7 +1309,7 @@ export default function Payment() {
                 />
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-700">Duration</label>
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Duration</label>
                   <div className="mt-1 space-y-2">
                     <select
                       value={
@@ -1332,7 +1329,7 @@ export default function Payment() {
                         setShowCustomDuration(false);
                         setForm((p) => ({ ...p, duration: e.target.value }));
                       }}
-                      className="w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                      className="w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                     >
                       <option value="">Select saved duration</option>
                       {durationOptions.map((item) => (
@@ -1349,23 +1346,23 @@ export default function Payment() {
                         value={form.duration}
                         onChange={onChange}
                         onBlur={(e) => rememberDurationOption(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                        className="w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                         placeholder="Enter manual duration, e.g. 25 days"
                       />
                     )}
                   </div>
-                  <p className="mt-2 text-xs text-slate-500">
+                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
                     Select saved duration or choose Others to add manually.
                   </p>
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-700">Field Work</label>
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Field Work</label>
                   <select
                     name="field_work"
                     value={form.field_work}
                     onChange={onChange}
-                    className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                    className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                   >
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
@@ -1373,12 +1370,12 @@ export default function Payment() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-700">Status</label>
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Status</label>
                   <select
                     name="status"
                     value={form.status}
                     onChange={onChange}
-                    className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+                    className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                   >
                     <option value="assign">Assign</option>
                     <option value="hold">Hold</option>
@@ -1405,20 +1402,20 @@ export default function Payment() {
                 />
 
                 <div className="md:col-span-2">
-                  <div className="p-4 rounded-md border border-slate-200 bg-slate-50 flex items-center justify-between">
+                  <div className="p-4 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex items-center justify-between">
                     <div>
-                      <div className="text-xs text-slate-600">Pending Amount (auto)</div>
-                      <div className="text-lg font-bold text-slate-900">
+                      <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">Pending Amount (auto)</div>
+                      <div className="text-lg font-bold text-slate-900 dark:text-white">
                         ₹{money(pendingPreview)}
                       </div>
                     </div>
 
                     <span
                       className={cn(
-                        "px-3 py-1 rounded-md text-xs font-bold border",
+                        "px-3 py-1 rounded-md text-xs font-bold border transition-colors",
                         pendingPreview === 0
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                          : "bg-amber-50 text-amber-800 border-amber-200"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800/60"
+                          : "bg-amber-50 text-amber-800 border-amber-200 dark:bg-yellow-950/50 dark:text-yellow-300 dark:border-yellow-800/60"
                       )}
                     >
                       {pendingPreview === 0 ? "Cleared" : "Pending"}
@@ -1427,18 +1424,18 @@ export default function Payment() {
                 </div>
               </div>
 
-              <div className="shrink-0 border-t border-slate-200 bg-white px-6 py-4 flex items-center justify-end gap-2">
+              <div className="shrink-0 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-4 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-5 py-2.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold text-slate-800 shadow-sm"
+                  className="px-5 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-semibold text-slate-800 dark:text-slate-200 shadow-sm transition"
                   disabled={saving}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-md bg-slate-900 text-white hover:bg-slate-800 text-sm font-semibold shadow-sm disabled:opacity-60"
+                  className="px-5 py-2.5 rounded-md bg-slate-900 dark:bg-blue-600 text-white hover:bg-slate-800 dark:hover:bg-blue-700 text-sm font-semibold shadow-sm disabled:opacity-60 transition"
                   disabled={saving}
                 >
                   {saving ? "Saving..." : mode === "create" ? "Save Payment" : "Update Payment"}
@@ -1449,17 +1446,17 @@ export default function Payment() {
         </div>
       )}
 
-      { importOpen && (
+      {importOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/45" onClick={closeImport} />
+          <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px]" onClick={closeImport} />
 
-          <div className="relative w-[94%] max-w-xl bg-white rounded-md shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="px-4 py-3 bg-gradient-to-r from-[#0b2533] via-[#123b52] to-[#0b2533] text-white flex items-center justify-between">
-              <div className="font-semibold">Import Leads</div>
+          <div className="relative w-[94%] max-w-xl bg-white dark:bg-slate-900 rounded-md shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+            <div className="px-4 py-3 bg-gradient-to-r from-[#0b2533] via-[#123b52] to-[#0b2533] dark:from-slate-800 dark:via-slate-850 dark:to-slate-800 text-white flex items-center justify-between">
+              <div className="font-semibold text-sm">Import Leads</div>
               <button
                 type="button"
                 onClick={closeImport}
-                className="p-2 rounded-md hover:bg-white/10 transition"
+                className="p-1.5 rounded-md hover:bg-white/10 transition text-white"
                 disabled={importBusy}
               >
                 <X size={18} />
@@ -1468,41 +1465,41 @@ export default function Payment() {
 
             <div className="p-4 space-y-4">
               {importErr && (
-                <div className="text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-md">
+                <div className="text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 px-3 py-2 rounded-md">
                   {importErr}
                 </div>
               )}
 
               {importBusy ? (
-                <div className="flex items-center gap-2 text-slate-700">
-                  <Loader2 className="animate-spin" size={18} />
+                <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-semibold">
+                  <Loader2 className="animate-spin text-blue-500" size={18} />
                   Importing...
                 </div>
               ) : (
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     File (CSV / XLSX)
                   </label>
                   <input
                     type="file"
                     accept=".csv,.xlsx,.xls"
                     onChange={(e) => setImportFile(e.target.files?.[0] || null)}
-                    className="w-full text-sm file:mr-3 file:px-16 file:py-2 file:rounded-md file:border file:border-slate-200 file:bg-white file:hover:bg-slate-50 file:cursor-pointer cursor-pointer"
+                    className="w-full text-sm text-slate-700 dark:text-slate-300 file:mr-3 file:px-4 file:py-2 file:rounded-md file:border file:border-slate-200 dark:file:border-slate-700 file:bg-white dark:file:bg-slate-800 file:text-slate-800 dark:file:text-slate-200 file:hover:bg-slate-50 dark:file:hover:bg-slate-700 file:cursor-pointer cursor-pointer"
                   />
-                  <div className="text-[11px] text-slate-500 mt-1">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">
                     Tip: Download Sample first, then fill and upload.
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="p-4 border-t border-slate-200 flex flex-col sm:flex-row gap-2 sm:justify-end">
+            <div className="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-2 sm:justify-end bg-slate-50/50 dark:bg-slate-850/50">
               <button
                 type="button"
                 onClick={downloadDummy}
-                className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition text-slate-800 font-semibold text-sm"
+                className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition text-slate-800 dark:text-slate-200 font-semibold text-xs"
               >
-                <Download size={16} />
+                <Download size={15} />
                 Download Sample
               </button>
 
@@ -1512,18 +1509,18 @@ export default function Payment() {
                 disabled={importBusy}
                 className={cn(
                   "inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-md",
-                  "bg-[#0b2533] text-white font-semibold text-sm hover:bg-[#123b52] transition",
+                  "bg-[#0b2533] dark:bg-blue-600 text-white font-semibold text-xs hover:bg-[#123b52] dark:hover:bg-blue-700 transition",
                   importBusy && "opacity-60 cursor-not-allowed"
                 )}
               >
                 {importBusy ? (
                   <>
-                    <Loader2 size={16} className="animate-spin" />
+                    <Loader2 size={15} className="animate-spin" />
                     Importing...
                   </>
                 ) : (
                   <>
-                    <Upload size={16} />
+                    <Upload size={15} />
                     Import
                   </>
                 )}
@@ -1539,10 +1536,10 @@ export default function Payment() {
 function Field({ label, ...props }: { label: string; [key: string]: any }) {
   return (
     <div>
-      <label className="text-xs font-semibold text-slate-700">{label}</label>
+      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">{label}</label>
       <input
         {...props}
-        className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 transition"
+        className="mt-1 w-full px-3 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition placeholder:text-slate-400 dark:placeholder:text-slate-500"
       />
     </div>
   );
@@ -1550,9 +1547,9 @@ function Field({ label, ...props }: { label: string; [key: string]: any }) {
 
 function MiniStat({ label, value }: { label: string; value: any }) {
   return (
-    <div className="flex justify-between rounded-md border border-slate-200 bg-white px-3 py-2">
-      <div className="text-[15px] text-slate-500 font-semibold">{label}</div>
-      <div className="text-lg font-bold text-slate-900">{value}</div>
+    <div className="flex justify-between items-center rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 shadow-2xs transition-colors">
+      <div className="text-[13px] text-slate-500 dark:text-slate-400 font-semibold">{label}</div>
+      <div className="text-base font-bold text-slate-900 dark:text-white">{value}</div>
     </div>
   );
 }

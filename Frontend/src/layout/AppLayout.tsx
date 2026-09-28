@@ -37,6 +37,9 @@ import {
   Sun,
   Moon,
   BellRing,
+  Ticket,
+  Tag,
+  Radio,
 } from "lucide-react";
 import ActivityTracker from "../activity/ActivityTracker";
 
@@ -220,6 +223,11 @@ export default function AppLayout() {
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    leads:
+      location.pathname.startsWith("/leads") ||
+      location.pathname.startsWith("/create-lead") ||
+      location.pathname.startsWith("/status") ||
+      location.pathname.startsWith("/source"),
     quotations:
       location.pathname.startsWith("/create-quotation") ||
       location.pathname.startsWith("/quotation-dashboard") ||
@@ -299,7 +307,20 @@ export default function AppLayout() {
         badgeCount: reminderAlerts.length + paymentReminderAlerts.length,
       },
       { label: "Analytics", to: "/reports", icon: PieChart },
-      { label: "Leads", to: "/leads", icon: Box },
+      {
+        label: "Leads",
+        to: "/leads",
+        icon: Box,
+        children: [
+          { label: "All Leads", to: "/leads", icon: Box },
+          { label: "Assigned Leads", to: "/leads?view=assigned", icon: UserCheck },
+          { label: "Unassigned Leads", to: "/leads?view=unassigned", icon: Users },
+          { label: "Create Lead", to: "/create-lead", icon: CheckSquare },
+          { label: "Lead Status", to: "/status", icon: Tag },
+          { label: "Lead Source", to: "/source", icon: Radio },
+        ],
+      },
+      { label: "Tickets", to: "/tickets", icon: Ticket },
       { label: "Contacts", to: "/contacts", icon: UserCheck },
       { label: "Companies", to: "/companies", icon: Building2 },
       { label: "Deals", to: "/deals", icon: Briefcase },
@@ -326,6 +347,14 @@ export default function AppLayout() {
   );
 
   useEffect(() => {
+    if (
+      location.pathname.startsWith("/leads") ||
+      location.pathname.startsWith("/create-lead") ||
+      location.pathname.startsWith("/status") ||
+      location.pathname.startsWith("/source")
+    ) {
+      setOpenGroups((prev) => ({ ...prev, leads: true }));
+    }
     if (
       location.pathname.startsWith("/quotation-dashboard") ||
       location.pathname.startsWith("/create-quotation") ||

@@ -116,10 +116,10 @@ function YesNoBadge({ value }: { value?: YesNo }) {
   return (
     <span
       className={[
-        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold",
+        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold transition-colors",
         yes
-          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-          : "border-red-200 bg-red-50 text-red-700",
+          ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800/60 dark:bg-emerald-950/50 dark:text-emerald-300"
+          : "border-red-200 bg-red-50 text-red-700 dark:border-red-800/60 dark:bg-red-950/50 dark:text-red-300",
       ].join(" ")}
     >
       {yes ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
@@ -411,7 +411,7 @@ export default function FieldWork() {
             <button
               type="button"
               onClick={loadFieldWorks}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-[#233a47] bg-[#233a47] hover:bg-[#1c303b] transition shadow-sm text-white font-semibold"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-[#233a47] bg-[#233a47] hover:bg-[#1c303b] dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 transition shadow-sm text-white font-semibold"
             >
               <RefreshCcw size={16} className={loading ? "animate-spin" : ""} />
               Refresh
@@ -429,22 +429,26 @@ export default function FieldWork() {
         }
       />
 
-
-      <div className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm">
-        <div className="px-4 py-3 border-b border-slate-200">
-          <div className="text-sm font-bold text-slate-900">Field Work Records</div>
-          <div className="text-xs text-slate-500">All field work entries.</div>
+      <div className="overflow-hidden rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition-colors">
+        <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div>
+            <div className="text-sm font-bold text-slate-900 dark:text-white">Field Work Records</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">All field work entries.</div>
+          </div>
         </div>
 
         {loading ? (
-          <div className="p-5 text-slate-700 font-semibold">Loading...</div>
+          <div className="p-8 text-center text-slate-700 dark:text-slate-300 font-semibold flex items-center justify-center gap-2">
+            <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+            Loading field works...
+          </div>
         ) : rows.length === 0 ? (
-          <div className="p-5 text-slate-600">No field work found.</div>
+          <div className="p-8 text-center text-slate-600 dark:text-slate-400">No field work found.</div>
         ) : (
           <>
             <div className="w-full overflow-x-auto">
               <table className="min-w-[1280px] w-full border-collapse">
-                <thead className="bg-slate-50">
+                <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800">
                   <tr className="text-left">
                     {[
                       "S.No",
@@ -462,7 +466,7 @@ export default function FieldWork() {
                     ].map((h) => (
                       <th
                         key={h}
-                        className="px-4 py-3 text-[11px] font-extrabold uppercase tracking-wide text-slate-600"
+                        className="px-4 py-3 text-[11px] font-extrabold uppercase tracking-wide text-slate-600 dark:text-slate-300"
                       >
                         {h}
                       </th>
@@ -470,7 +474,7 @@ export default function FieldWork() {
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                   {paginated.map((r, idx) => {
                     const leadName = getLeadName(r.lead);
                     const isHighlighted = highlightLeadId !== null && Number(r.lead_id) === highlightLeadId;
@@ -479,13 +483,13 @@ export default function FieldWork() {
                       <tr
                         key={r.id}
                         id={`fieldwork-row-${r.id}`}
-                        className={`transition-all duration-300 hover:bg-slate-50 ${
+                        className={`transition-all duration-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 ${
                           isHighlighted
-                            ? "bg-blue-50/80 outline outline-2 outline-blue-500 outline-offset-[-2px] shadow-sm"
+                            ? "bg-blue-50/80 dark:bg-blue-950/40 outline outline-2 outline-blue-500 outline-offset-[-2px] shadow-sm"
                             : ""
                         }`}
                       >
-                        <td className="px-4 py-3 text-sm font-bold text-slate-900">
+                        <td className="px-4 py-3 text-sm font-bold text-slate-900 dark:text-slate-200">
                           {(page - 1) * pageSize + idx + 1}
                         </td>
 
@@ -496,31 +500,31 @@ export default function FieldWork() {
                               onClick={() => handleLeadOpen(r)}
                               className="text-left group"
                             >
-                              <div className="text-sm font-bold text-blue-700 group-hover:underline">
+                              <div className="text-sm font-bold text-blue-600 dark:text-blue-400 group-hover:underline">
                                 {leadName || "No Lead Name"}
                               </div>
 
-                              <div className="text-xs font-semibold text-slate-500">
+                              <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                                 Lead No: {r.lead?.contact_no || "—"}
                               </div>
                             </button>
                           ) : (
-                            <span className="text-sm font-bold text-slate-400">No Lead</span>
+                            <span className="text-sm font-bold text-slate-400 dark:text-slate-500">No Lead</span>
                           )}
                         </td>
 
                         <td className="px-4 py-3">
-                          <span className="inline-flex items-center gap-1  px-3 py-1 text-sm font-bold text-slate-700">
-                            <CalendarDays className="h-3.5 w-3.5" />
+                          <span className="inline-flex items-center gap-1 text-sm font-bold text-slate-700 dark:text-slate-300">
+                            <CalendarDays className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
                             {r.days || "—"}
                           </span>
                         </td>
 
-                        <td className="px-4 py-3 text-sm font-semibold text-blue-600">
+                        <td className="px-4 py-3 text-sm font-semibold text-blue-600 dark:text-blue-400">
                           {r.number || "—"}
                         </td>
 
-                        <td className="px-4 py-3 text-sm font-semibold text-slate-900">
+                        <td className="px-4 py-3 text-sm font-semibold text-slate-900 dark:text-slate-200">
                           {r.case_type || "—"}
                         </td>
 
@@ -537,19 +541,19 @@ export default function FieldWork() {
                         </td>
 
                         <td className="px-4 py-3">
-                          <span className="inline-flex items-center gap-1 px-3 py-1 text-sm font-bold text-slate-900">
+                          <span className="inline-flex items-center gap-1 text-sm font-bold text-emerald-600 dark:text-emerald-400">
                             <CircleDollarSign className="h-3.5 w-3.5" />
-                            {r.amount || 0}
+                            ₹{Number(r.amount || 0).toLocaleString("en-IN")}
                           </span>
                         </td>
 
                         <td className="px-4 py-3">
-                          <div className="max-w-[280px] truncate text-sm text-slate-700">
+                          <div className="max-w-[280px] truncate text-sm text-slate-700 dark:text-slate-300" title={r.remarks || ""}>
                             {r.remarks || "—"}
                           </div>
                         </td>
 
-                        <td className="px-4 py-3 text-xs text-slate-600">
+                        <td className="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">
                           {formatDateTime(r.updatedAt || r.updated_at)}
                         </td>
 
@@ -559,12 +563,11 @@ export default function FieldWork() {
                             <button
                               type="button"
                               onClick={() => openEditModal(r)}
-                              className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold text-slate-800 shadow-sm"
+                              className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-semibold text-slate-800 dark:text-slate-200 shadow-sm"
                             >
                               <Pencil className="h-4 w-4" />
                               Edit
                             </button>
-
                             )}
 
                             {isAdmin && (
@@ -572,7 +575,7 @@ export default function FieldWork() {
                                 type="button"
                                 onClick={() => handleDelete(r.id)}
                                 disabled={deletingId === r.id}
-                                className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-50 disabled:opacity-60"
+                                className="inline-flex items-center gap-2 rounded-md border border-red-200 dark:border-red-900/50 bg-white dark:bg-red-950/30 px-3 py-2 text-xs font-bold text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 disabled:opacity-60 transition"
                               >
                                 {deletingId === r.id ? (
                                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -591,16 +594,16 @@ export default function FieldWork() {
               </table>
             </div>
 
-            <div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between">
-              <div className="text-xs text-slate-600">
-                Page <b>{page}</b> of <b>{totalPages}</b>
+            <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div className="text-xs text-slate-600 dark:text-slate-400">
+                Page <b className="text-slate-900 dark:text-white">{page}</b> of <b className="text-slate-900 dark:text-white">{totalPages}</b>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-3 py-2 text-xs font-bold disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   Prev
@@ -609,7 +612,7 @@ export default function FieldWork() {
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-3 py-2 text-xs font-bold disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
                 >
                   Next
                   <ChevronRight className="h-4 w-4" />
@@ -622,13 +625,13 @@ export default function FieldWork() {
 
       {modalOpen && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-[2px]">
-          <div className="flex max-h-[calc(100vh-32px)] w-full max-w-3xl flex-col overflow-hidden rounded-md border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.38)]">
-            <div className="shrink-0 flex items-center justify-between border-b border-slate-200 px-5 py-4">
+          <div className="flex max-h-[calc(100vh-32px)] w-full max-w-3xl flex-col overflow-hidden rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_28px_90px_rgba(15,23,42,0.38)]">
+            <div className="shrink-0 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 px-5 py-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                   {editingRow ? "Edit Field Work" : "Add Field Work"}
                 </h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   Search lead by name and add field work details.
                 </p>
               </div>
@@ -636,7 +639,7 @@ export default function FieldWork() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded-md border border-slate-200 p-2 text-slate-500 hover:bg-slate-50"
+                className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -644,28 +647,28 @@ export default function FieldWork() {
 
             <div className="sidebar-scroll min-h-0 flex-1 overflow-y-auto p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2 relative">
-                <label className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                <label className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Lead Name
                 </label>
 
-                <div className="mt-1 flex items-center gap-2 rounded-md border border-slate-200 px-3">
-                  <Search className="h-4 w-4 text-slate-500" />
+                <div className="mt-1 flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3">
+                  <Search className="h-4 w-4 text-slate-500 dark:text-slate-400" />
 
                   <input
                     type="text"
                     value={leadSearch}
                     onChange={(e) => searchLeads(e.target.value)}
-                    className="h-11 w-full bg-transparent text-sm font-semibold text-slate-900 outline-none"
+                    className="h-11 w-full bg-transparent text-sm font-semibold text-slate-900 dark:text-white outline-none"
                     placeholder="Search lead name..."
                   />
 
-                  {leadLoading && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
+                  {leadLoading && <Loader2 className="h-4 w-4 animate-spin text-slate-500 dark:text-slate-400" />}
 
                   {leadSearch && (
                     <button
                       type="button"
                       onClick={clearSelectedLead}
-                      className="rounded-full p-1 text-slate-500 hover:bg-slate-100"
+                      className="rounded-full p-1 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -673,25 +676,25 @@ export default function FieldWork() {
                 </div>
 
                 {selectedLead && (
-                  <div className="mt-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
+                  <div className="mt-2 rounded-md border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300">
                     Selected Lead: {getLeadName(selectedLead)} {selectedLead.contact_no ? `(${selectedLead.contact_no})` : ""}
                   </div>
                 )}
 
                 {leadResults.length > 0 && (
-                  <div className="absolute left-0 right-0 z-50 mt-2 max-h-64 overflow-auto rounded-md border border-slate-200 bg-white shadow-xl">
+                  <div className="absolute left-0 right-0 z-50 mt-2 max-h-64 overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl">
                     {leadResults.map((lead) => (
                       <button
                         key={lead.id}
                         type="button"
                         onClick={() => selectLead(lead)}
-                        className="block w-full border-b border-slate-100 px-4 py-3 text-left hover:bg-slate-50 last:border-b-0"
+                        className="block w-full border-b border-slate-100 dark:border-slate-700/60 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700/60 last:border-b-0"
                       >
-                        <div className="text-sm font-bold text-slate-900">
+                        <div className="text-sm font-bold text-slate-900 dark:text-white">
                           {getLeadName(lead) || "No Lead Name"}
                         </div>
 
-                        <div className="text-xs font-semibold text-slate-500">
+                        <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                           Lead No: {lead.contact_no || "—"}
                         </div>
                       </button>
@@ -707,14 +710,14 @@ export default function FieldWork() {
                 ["Amount", "amount", "number"],
               ].map(([label, key, type]: any) => (
                 <div key={key}>
-                  <label className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                  <label className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     {label}
                   </label>
                   <input
                     type={type}
                     value={(form as any)[key]}
                     onChange={(e) => updateForm(key, e.target.value)}
-                    className="mt-1 h-11 w-full rounded-md border border-slate-200 px-3 text-sm font-semibold text-slate-900 outline-none focus:border-slate-400"
+                    className="mt-1 h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-sm font-semibold text-slate-900 dark:text-white outline-none focus:border-blue-500 dark:focus:border-blue-400"
                     placeholder={`Enter ${label.toLowerCase()}`}
                   />
                 </div>
@@ -726,13 +729,13 @@ export default function FieldWork() {
                 ["Proof", "proof"],
               ].map(([label, key]: any) => (
                 <div key={key}>
-                  <label className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                  <label className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     {label}
                   </label>
                   <select
                     value={(form as any)[key]}
                     onChange={(e) => updateForm(key, e.target.value)}
-                    className="mt-1 h-11 w-full rounded-md border border-slate-200 px-3 text-sm font-semibold text-slate-900 outline-none focus:border-slate-400"
+                    className="mt-1 h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-sm font-semibold text-slate-900 dark:text-white outline-none focus:border-blue-500 dark:focus:border-blue-400"
                   >
                     <option value="no">No</option>
                     <option value="yes">Yes</option>
@@ -741,25 +744,25 @@ export default function FieldWork() {
               ))}
 
               <div className="md:col-span-2">
-                <label className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                <label className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Remarks
                 </label>
                 <textarea
                   value={form.remarks}
                   onChange={(e) => updateForm("remarks", e.target.value)}
                   rows={4}
-                  className="mt-1 w-full rounded-md border border-slate-200 px-3 py-3 text-sm text-slate-900 outline-none focus:border-slate-400 resize-none"
+                  className="mt-1 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-3 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500 dark:focus:border-blue-400 resize-none"
                   placeholder="Enter remarks"
                 />
               </div>
             </div>
 
-            <div className="shrink-0 flex items-center justify-end gap-3 border-t border-slate-200 bg-white px-5 py-4">
+            <div className="shrink-0 flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-4">
               <button
                 type="button"
                 onClick={closeModal}
                 disabled={saving}
-                className="inline-flex h-11 items-center justify-center rounded-md border border-slate-200 px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+                className="inline-flex h-11 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60"
               >
                 Cancel
               </button>
@@ -768,7 +771,7 @@ export default function FieldWork() {
                 type="button"
                 onClick={handleSave}
                 disabled={saving}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-slate-900 px-5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-slate-900 dark:bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-slate-800 dark:hover:bg-blue-700 disabled:opacity-60"
               >
                 {saving ? (
                   <>

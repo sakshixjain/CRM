@@ -122,14 +122,11 @@ export default function GSTCalculator() {
       {/* ✅ HEADER LIKE STATUS PAGE */}
       <PageHeader
         title="GST Calculator"
-        // subtitle="Add / Remove GST + 60/40 payment split"
-        // total={0}
         search=""
-        // onSearch={() => {}}
         icon={<Calculator size={18} />}
         rightActions={
           <>
-            <div className="inline-flex rounded-md border border-slate-200 bg-slate-100 p-1">
+            <div className="inline-flex rounded-md border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-1">
               <SegBtn active={mode === "add"} onClick={() => setMode("add")}>
                 Add GST
               </SegBtn>
@@ -143,7 +140,7 @@ export default function GSTCalculator() {
 
             <button
               onClick={onReset}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition shadow-sm text-slate-800 font-semibold"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-sm text-slate-800 dark:text-slate-200 font-semibold"
               type="button"
             >
               <RefreshCcw size={16} />
@@ -202,13 +199,13 @@ export default function GSTCalculator() {
 
               <ToggleLine
                 checked={useIGST}
-                onChange={() => setUseIGST((v) => !v)}
+                onChange={() => setUseIGST((v: boolean) => !v)}
                 title="Use IGST (Inter-state)"
                 desc="If OFF → GST splits into CGST + SGST equally."
               />
 
-              <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
-                <div className="text-sm font-semibold text-slate-900">
+              <div className="rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-4">
+                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                   Quick View
                 </div>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -227,10 +224,10 @@ export default function GSTCalculator() {
         <div className="lg:col-span-7">
           <Card className="h-full">
             <div className="flex items-center justify-between">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                 Summary
               </div>
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+              <span className="rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
                 Rate: {activeRate}%
               </span>
             </div>
@@ -241,15 +238,15 @@ export default function GSTCalculator() {
               <Stat label="Total" value={inr(result.totalAmount)} highlight />
             </div>
 
-            <div className="mt-4 rounded-md border border-slate-200 p-4">
-              <div className="flex justify-between text-sm font-semibold">
+            <div className="mt-4 rounded-md border border-slate-200 dark:border-slate-800 dark:bg-slate-800/30 p-4">
+              <div className="flex justify-between text-sm font-semibold text-slate-900 dark:text-slate-100">
                 GST Breakdown
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-slate-500 dark:text-slate-400">
                   {useIGST ? "IGST" : "CGST + SGST"}
                 </span>
               </div>
 
-              <div className="mt-3 space-y-2">
+              <div className="mt-3 space-y-2 text-slate-700 dark:text-slate-300">
                 {useIGST ? (
                   <Row label="IGST" value={inr(result.igst)} />
                 ) : (
@@ -261,11 +258,11 @@ export default function GSTCalculator() {
               </div>
             </div>
 
-            <div className="mt-5 text-sm font-semibold text-slate-900">
+            <div className="mt-5 text-sm font-semibold text-slate-900 dark:text-slate-100">
               Payment Split
             </div>
 
-            <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+            <div className="mt-3 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-4">
               <div className="flex flex-wrap gap-2">
                 {SPLIT_PRESETS.map(([a, b]) => (
                   <button
@@ -276,10 +273,10 @@ export default function GSTCalculator() {
                       setSplitPercentB(b);
                     }}
                     className={cn(
-                      "rounded-md border px-3 py-1.5 text-xs font-medium transition",
+                      "rounded-md border px-3 py-1.5 text-xs font-semibold transition shadow-2xs",
                       safeSplitA === a && safeSplitB === b
-                        ? "border-slate-900 bg-slate-900 text-white"
-                        : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                        ? "border-slate-900 bg-slate-900 text-white dark:border-blue-500 dark:bg-blue-600"
+                        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
                     )}
                   >
                     {a}% / {b}%
@@ -287,7 +284,7 @@ export default function GSTCalculator() {
                 ))}
               </div>
 
-              <div className="mt-2 rounded-md border border-slate-200 bg-white p-4">
+              <div className="mt-3 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
                 <input
                   type="range"
                   min="0"
@@ -295,7 +292,7 @@ export default function GSTCalculator() {
                   step="1"
                   value={splitPercentA}
                   onChange={(e) => handleSplitAChange(Number(e.target.value))}
-                  className="w-full"
+                  className="w-full accent-blue-600 cursor-pointer"
                 />
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <SplitInput
@@ -322,7 +319,7 @@ export default function GSTCalculator() {
                 />
               </div>
 
-              <div className="mt-4 border-t border-slate-200 pt-3">
+              <div className="mt-4 border-t border-slate-200 dark:border-slate-700 pt-3 text-slate-700 dark:text-slate-300">
                 <Row
                   label="Split Total %"
                   value={`${splitTotal}%`}
@@ -354,7 +351,7 @@ function Card({
   return (
     <div
       className={cn(
-        "h-full rounded-md border border-slate-200 bg-white p-5 shadow-sm",
+        "h-full rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm transition-colors",
         className
       )}
     >
@@ -365,7 +362,7 @@ function Card({
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="px-3 py-1 text-xs font-medium border rounded-full bg-slate-50 border-slate-200">
+    <span className="px-3 py-1 text-xs font-semibold border rounded-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">
       {children}
     </span>
   );
@@ -380,10 +377,10 @@ function SegBtn({
     <button
       onClick={onClick}
       className={cn(
-        "px-4 py-2 text-sm font-medium rounded-md transition",
+        "px-4 py-2 text-sm font-semibold rounded-md transition",
         active
-          ? "bg-white border border-slate-200 shadow-sm"
-          : "text-slate-600 hover:text-slate-900"
+          ? "bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white shadow-sm"
+          : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
       )}
     >
       {children}
@@ -394,12 +391,12 @@ function SegBtn({
 function Field({ label, hint, children }: any) {
   return (
     <div>
-      <label className="text-sm font-medium text-slate-800">
+      <label className="text-sm font-semibold text-slate-800 dark:text-slate-200">
         {label}
       </label>
       <div className="mt-2">{children}</div>
       {hint && (
-        <div className="mt-1 text-xs text-slate-500">
+        <div className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
           {hint}
         </div>
       )}
@@ -409,13 +406,13 @@ function Field({ label, hint, children }: any) {
 
 function MoneyInput({ value, onChange }: any) {
   return (
-    <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
-      <span className="text-slate-500">₹</span>
+    <div className="flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 transition focus-within:border-blue-500 dark:focus-within:border-blue-400">
+      <span className="text-slate-500 dark:text-slate-400 font-bold">₹</span>
       <input
         type="number"
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full bg-transparent outline-none text-sm font-medium"
+        className="w-full bg-transparent outline-none text-sm font-semibold text-slate-900 dark:text-white"
       />
     </div>
   );
@@ -423,16 +420,17 @@ function MoneyInput({ value, onChange }: any) {
 
 function ToggleLine({ checked, onChange, title, desc }: any) {
   return (
-    <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
-      <label className="flex gap-3 items-start">
+    <div className="rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 p-4 transition">
+      <label className="flex gap-3 items-start cursor-pointer">
         <input
           type="checkbox"
           checked={checked}
           onChange={onChange}
+          className="mt-0.5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 accent-blue-600 h-4 w-4"
         />
         <div>
-          <div className="text-sm font-medium">{title}</div>
-          <div className="text-xs text-slate-600">{desc}</div>
+          <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</div>
+          <div className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{desc}</div>
         </div>
       </label>
     </div>
@@ -449,12 +447,14 @@ function RatePicker({
 }: any) {
   return (
     <div className="space-y-3">
-      <div className="inline-flex rounded-md border border-slate-200 bg-slate-100 p-1">
+      <div className="inline-flex rounded-md border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-1">
         <button
           onClick={() => setRateMode("preset")}
           className={cn(
-            "px-3 py-1 text-xs rounded-md",
-            rateMode === "preset" && "bg-white shadow-sm"
+            "px-3 py-1 text-xs font-semibold rounded-md transition",
+            rateMode === "preset"
+              ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+              : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
           )}
         >
           Preset
@@ -462,8 +462,10 @@ function RatePicker({
         <button
           onClick={() => setRateMode("custom")}
           className={cn(
-            "px-3 py-1 text-xs rounded-md",
-            rateMode === "custom" && "bg-white shadow-sm"
+            "px-3 py-1 text-xs font-semibold rounded-md transition",
+            rateMode === "custom"
+              ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+              : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
           )}
         >
           Custom
@@ -477,10 +479,10 @@ function RatePicker({
               key={r}
               onClick={() => setGstRate(r)}
               className={cn(
-                "px-3 py-2 text-sm border rounded-md",
+                "px-3 py-2 text-sm font-semibold border rounded-md transition shadow-2xs",
                 gstRate === r
-                  ? "bg-slate-900 text-white"
-                  : "bg-white border-slate-200"
+                  ? "bg-slate-900 dark:bg-blue-600 border-slate-900 dark:border-blue-500 text-white"
+                  : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
               )}
             >
               {r}%
@@ -494,7 +496,7 @@ function RatePicker({
           onChange={(e) =>
             setCustomRate(Number(e.target.value))
           }
-          className="w-full border border-slate-200 rounded-md px-3 py-2"
+          className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-md px-3 py-2 text-sm font-semibold outline-none focus:border-blue-500 dark:focus:border-blue-400"
         />
       )}
     </div>
@@ -505,23 +507,32 @@ function Stat({ label, value, highlight }: any) {
   return (
     <div
       className={cn(
-        "rounded-md border p-4",
+        "rounded-md border p-4 transition",
         highlight
-          ? "bg-slate-100 border-slate-200"
-          : "bg-white border-slate-200"
+          ? "bg-slate-100 dark:bg-blue-950/30 border-slate-200 dark:border-blue-800/60"
+          : "bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-800"
       )}
     >
-      <div className="text-xs text-slate-500">{label}</div>
-      <div className="mt-1 text-sm font-semibold">{value}</div>
+      <div className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</div>
+      <div
+        className={cn(
+          "mt-1 text-sm font-bold",
+          highlight
+            ? "text-blue-600 dark:text-blue-400 text-base"
+            : "text-slate-900 dark:text-slate-100"
+        )}
+      >
+        {value}
+      </div>
     </div>
   );
 }
 
 function Row({ label, value, strong }: any) {
   return (
-    <div className="flex justify-between text-sm">
-      <div>{label}</div>
-      <div className={strong ? "font-semibold" : ""}>
+    <div className="flex justify-between text-sm py-1">
+      <div className="text-slate-600 dark:text-slate-400">{label}</div>
+      <div className={cn("text-slate-900 dark:text-slate-100", strong && "font-bold text-slate-950 dark:text-white")}>
         {value}
       </div>
     </div>
@@ -530,18 +541,18 @@ function Row({ label, value, strong }: any) {
 
 function SplitInput({ label, value, onChange }: any) {
   return (
-    <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
-      <div className="text-xs font-medium text-slate-600">{label}</div>
-      <div className="mt-2 flex items-center rounded-md border border-slate-200 bg-white px-3 py-2">
+    <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 p-3">
+      <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">{label}</div>
+      <div className="mt-2 flex items-center rounded-md border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2">
         <input
           type="number"
           min="0"
           max="100"
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full bg-transparent text-sm font-semibold outline-none"
+          className="w-full bg-transparent text-sm font-bold outline-none text-slate-900 dark:text-white"
         />
-        <span className="text-sm font-medium text-slate-500">%</span>
+        <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">%</span>
       </div>
     </div>
   );
@@ -549,18 +560,18 @@ function SplitInput({ label, value, onChange }: any) {
 
 function MiniInfo({ label, value }: any) {
   return (
-    <div className="rounded-md border border-slate-200 bg-white p-3">
-      <div className="text-xs text-slate-500">{label}</div>
-      <div className="mt-1 text-sm font-semibold text-slate-900">{value}</div>
+    <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 shadow-2xs">
+      <div className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</div>
+      <div className="mt-1 text-sm font-bold text-slate-900 dark:text-slate-100">{value}</div>
     </div>
   );
 }
 
 function MiniPayCard({ title, value }: any) {
   return (
-    <div className="rounded-md border border-slate-200 bg-white p-4">
-      <div className="text-xs text-slate-500">{title}</div>
-      <div className="mt-1 text-sm font-semibold">{value}</div>
+    <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-2xs">
+      <div className="text-xs font-medium text-slate-500 dark:text-slate-400">{title}</div>
+      <div className="mt-1 text-sm font-bold text-slate-900 dark:text-slate-100">{value}</div>
     </div>
   );
 }

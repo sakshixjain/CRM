@@ -13,6 +13,7 @@ const FieldWork = require("./FieldWork");
 const Quotation = require("./Quotation");
 const EmailTemplate = require("./EmailTemplate");
 const SmtpSetting = require("./SmtpSetting");
+const Ticket = require("./Ticket");
 
 /* -------------------- Roles -------------------- */
 
@@ -29,9 +30,11 @@ QuotationService.hasMany(Quotation, { foreignKey: "service_type", as: "quotation
 Quotation.belongsTo(QuotationService, { foreignKey: "service_type", as: "service" });
 
 
-FieldWork.belongsTo(Lead, {foreignKey: "lead_id",as: "lead",});
-Lead.hasMany(FieldWork, {foreignKey: "lead_id",as: "field_works",});
+FieldWork.belongsTo(Lead, { foreignKey: "lead_id", as: "lead" });
+Lead.hasMany(FieldWork, { foreignKey: "lead_id", as: "field_works" });
 
+Lead.hasMany(Ticket, { foreignKey: "lead_id", as: "tickets" });
+Agent.hasMany(Ticket, { foreignKey: "assigned_to", as: "assignedTickets" });
 
 module.exports = {
   sequelize,
@@ -47,4 +50,5 @@ module.exports = {
   Webhook,
   EmailTemplate,
   SmtpSetting,
+  Ticket,
 };
